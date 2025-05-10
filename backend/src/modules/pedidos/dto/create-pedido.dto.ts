@@ -7,6 +7,7 @@ import {
   ArrayMinSize,
   ArrayMaxSize,
   Min,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -18,6 +19,12 @@ export class ItemPedidoDto {
     message: 'O ID do produto no item do pedido não pode estar vazio.',
   })
   readonly produtoId!: string;
+
+  @IsOptional()
+  @IsUUID(undefined, {
+    message: 'O ID da variação no item do pedido deve ser um UUID válido.',
+  })
+  readonly variacaoId?: string; // Adicionamos o variacaoId como opcional
 
   @IsNumber(
     {},

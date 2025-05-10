@@ -4,54 +4,63 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
 }
 
 model Produto {
-  id            String    @id @default(uuid())
+  id            String      @id @default(uuid())
   nome          String
-  cor           String
-  numero        Int?
   preco         Float
   imagemUrl     String
-  categoria     Categoria @relation(fields: [categoriaId], references: [id])
+  categoria     Categoria   @relation(fields: [categoriaId], references: [id])
   categoriaId   String
-  quantidade    Int
-  estoque       Int       @default(0)
-  nivelMinimo   Int?
-  criadoEm      DateTime  @default(now())
-  atualizadoEm  DateTime  @updatedAt
+  criadoEm      DateTime    @default(now())
+  atualizadoEm  DateTime    @updatedAt
+  variacoes     Variacao[] // Relação com a Model Variacao
+}
+
+model Variacao {
+  id          String   @id @default(uuid())
+  cor         String
+  numero      Int?
+  imagemUrl   String? // Pode ser opcional se a imagem principal for usada
+  quantidade  Int       @default(0) // Quantidade específica para esta variação
+  estoque     Int       @default(0) // Estoque específico para esta variação
+  nivelMinimo Int?      // Nível mínimo de estoque para esta variação
+  produto     Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  produtoId   String
+  @@unique([produtoId, cor, numero]) // Garante que não haja variações duplicadas para o mesmo produto
 }
 
 model Categoria {
-  id       String    @id @default(uuid())
-  nome     String
-  produtos Produto[]
+  id        String    @id @default(uuid())
+  nome      String
+  produtos  Produto[]
 }
 
 model Pedido {
-  id        String   @id @default(uuid())
-  produtos  Json
-  status    String   // "em andamento", "concluído", "cancelado"
-  total     Float
-  criadoEm  DateTime @default(now())
-  clienteId String?
-  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+  id              String    @id @default(uuid())
+  produtos        Json
+  status          String    // "em andamento", "concluído", "cancelado"
+  total           Float
+  criadoEm        DateTime  @default(now())
+  clienteId       String?
+  cliente         Cliente?  @relation(fields: [clienteId], references: [id])
   enderecoEntrega Json?
 }
 
 model Cliente {
-  id       String  @id @default(uuid())
-  nome     String
-  telefone String
-  email    String?
-  pedidos  Pedido[]
+  id        String   @id @default(uuid())
+  nome      String
+  telefone  String
+  email     String?
+  pedidos   Pedido[]
 }
 
 model Usuario {
-  id       String @id @default(uuid())
-  email    String @unique
-  senha    String
-  nome     String
-  role     String // "admin", "colaborador"
+  id    String @id @default(uuid())
+  email String @unique
+  senha String
+  nome  String
+  role  String // "admin", "colaborador"
 }

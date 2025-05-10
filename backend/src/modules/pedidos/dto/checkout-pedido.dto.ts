@@ -7,6 +7,7 @@ import {
   IsNumber,
   Min,
   IsOptional,
+  IsUUID, // Importe IsUUID
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -15,15 +16,22 @@ export class CheckoutItemDto {
   @IsString()
   produtoId: string;
 
+  @IsOptional()
+  @IsUUID(undefined, {
+    message: 'O ID da variação no item do pedido deve ser um UUID válido.',
+  })
+  variacaoId?: string; // Adicionamos o variacaoId como opcional
+
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
   quantidade: number;
 
-  constructor(produtoId: string, quantidade: number) {
+  constructor(produtoId: string, quantidade: number, variacaoId?: string) {
     // Adicionando um construtor
     this.produtoId = produtoId;
     this.quantidade = quantidade;
+    this.variacaoId = variacaoId;
   }
 }
 

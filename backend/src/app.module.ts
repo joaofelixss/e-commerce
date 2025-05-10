@@ -15,6 +15,7 @@ import { EstoqueService } from './modules/estoque/estoque.service';
 import { NestFactory, NestApplication } from '@nestjs/core'; // Importando NestApplication
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UploadModule } from './upload/upload.module';
+import { VariacoesModule } from './modules/variacoes/variacoes.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UploadModule } from './upload/upload.module';
     ProdutosModule,
     DashboardModule,
     ScheduleModule.forRoot(),
+    VariacoesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, EstoqueService],

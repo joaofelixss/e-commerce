@@ -13,6 +13,7 @@ import {
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { UpdateVariacaoDto } from './dto/update-variacao.dto'; // Importe o UpdateVariacaoDto
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from '../../upload/upload.service';
@@ -34,10 +35,7 @@ export class ProdutosController {
 
   @Post()
   async create(@Body() createProdutoDto: CreateProdutoDto) {
-    // Por padrão, ao criar um produto, a imagemUrl pode ser uma string vazia ou você pode
-    // ter um campo separado para o upload da imagem. Se a imagem for obrigatória na criação,
-    // você precisará ajustar isso.
-    return this.produtosService.create({ ...createProdutoDto, imagemUrl: '' });
+    return this.produtosService.create(createProdutoDto);
   }
 
   @Get()
@@ -96,5 +94,13 @@ export class ProdutosController {
       return { url: produtoAtualizado?.imagemUrl };
     }
     return result;
+  }
+
+  @Patch('variacoes/:id')
+  async updateVariacao(
+    @Param('id') id: string,
+    @Body() updateVariacaoDto: UpdateVariacaoDto,
+  ) {
+    return this.produtosService.updateVariacao(id, updateVariacaoDto);
   }
 }

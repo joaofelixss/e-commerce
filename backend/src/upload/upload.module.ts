@@ -7,7 +7,7 @@ import { UploadController } from './upload.controller';
 @Module({
   imports: [
     MulterModule.register({
-     //
+      //
     }),
   ],
   controllers: [UploadController],

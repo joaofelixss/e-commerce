@@ -22,3 +22,19 @@ export const getProductById = async (id: string) => {
     throw error; // Rejogue o erro para quem chamar esta função
   }
 };
+
+export const getRelatedProducts = async (productId: string) => {
+  try {
+    // Adapte o endpoint da API para buscar produtos relacionados
+    const response = await axios.get(
+      `${API_BASE_URL}/produtos/${productId}/related`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      `Erro ao buscar produtos relacionados para o produto ID ${productId}:`,
+      error
+    );
+    throw error; // Rejogue o erro para quem chamar esta função
+  }
+};

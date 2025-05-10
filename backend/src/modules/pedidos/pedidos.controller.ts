@@ -34,12 +34,12 @@ export class PedidosController {
   ) {
     const page = parseInt(pageStr, 10);
     const limit = parseInt(limitStr, 10);
-    return this.pedidosService.findAll(page, limit);
+    return this.pedidosService.findAllPedidos(page, limit); // Chamando o método renomeado
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.pedidosService.findOne(id);
+    return this.pedidosService.findPedidoById(id); // Chamando o método renomeado
   }
 
   @Patch(':id')
@@ -47,12 +47,12 @@ export class PedidosController {
     @Param('id') id: string,
     @Body() updatePedidoDto: UpdatePedidoDto,
   ) {
-    return this.pedidosService.update(id, updatePedidoDto);
+    return this.pedidosService.updatePedido(id, updatePedidoDto); // Chamando o método renomeado
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.pedidosService.remove(id);
+    return this.pedidosService.removePedido(id); // Chamando o método renomeado
   }
 
   @Post('checkout') // ROTA PARA O CHECKOUT

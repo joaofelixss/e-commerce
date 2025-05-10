@@ -12,26 +12,42 @@ export class EstoqueService {
   async verificarNivelBaixoEstoque() {
     this.logger.log('Verificando níveis baixos de estoque...');
     const produtos = await this.prisma.produto.findMany({
-      where: {
-        nivelMinimo: {
-          not: null,
+      include: {
+        variacoes: {
+          where: {
+            nivelMinimo: {
+              not: null,
+            },
+          },
+          select: {
+            id: true,
+            cor: true,
+            numero: true,
+            estoque: true,
+            nivelMinimo: true,
+            produto: {
+              select: {
+                id: true,
+                nome: true,
+              },
+            },
+          },
         },
-      },
-      select: {
-        id: true,
-        nome: true,
-        estoque: true,
-        nivelMinimo: true,
       },
     });
 
     produtos.forEach((produto) => {
-      if (produto.estoque < (produto.nivelMinimo as number)) {
-        this.logger.warn(
-          `ALERTA DE ESTOQUE BAIXO (Tarefa Agendada): Produto ${produto.nome} (ID: ${produto.id}) atingiu o nível de ${produto.estoque}, abaixo do mínimo de ${produto.nivelMinimo}`,
-        );
-        // Aqui você pode adicionar outras ações, como enviar um e-mail.
-      }
+      produto.variacoes.forEach((variacao) => {
+        if (variacao.estoque < (variacao.nivelMinimo as number)) {
+          const variacaoIdentificacao =
+            variacao.cor +
+            (variacao.numero ? ` (Número: ${variacao.numero})` : '');
+          this.logger.warn(
+            `ALERTA DE ESTOQUE BAIXO (Tarefa Agendada): Produto ${produto.nome} (ID: ${produto.id}), Variação: ${variacaoIdentificacao} atingiu o nível de ${variacao.estoque}, abaixo do mínimo de ${variacao.nivelMinimo}`,
+          );
+          // Aqui você pode adicionar outras ações, como enviar um e-mail específico para a variação.
+        }
+      });
     });
     this.logger.log('Verificação de níveis baixos de estoque concluída.');
   }
