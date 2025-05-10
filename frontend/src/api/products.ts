@@ -38,3 +38,48 @@ export const getRelatedProducts = async (productId: string) => {
     throw error; // Rejogue o erro para quem chamar esta função
   }
 };
+
+export const getAllProducts = async (params?: Record<string, any>) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/produtos`, { params });
+    return response.data;
+  } catch (error: any) {
+    console.error("Erro ao buscar todos os produtos:", error);
+    throw error;
+  }
+};
+
+export const getProductsByCategory = async (
+  categoriaId: string,
+  params?: Record<string, any>
+) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/produtos?categoria=${categoriaId}`,
+      { params }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      `Erro ao buscar produtos da categoria ${categoriaId}:`,
+      error
+    );
+    throw error;
+  }
+};
+
+export const searchProducts = async (
+  query: string,
+  params?: Record<string, any>
+) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/produtos?search=${query}`,
+      { params }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Erro ao buscar produtos com a query "${query}":`, error);
+    throw error;
+  }
+};
