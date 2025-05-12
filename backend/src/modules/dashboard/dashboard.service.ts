@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { subDays, startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class DashboardService {
@@ -31,7 +32,7 @@ export class DashboardService {
     cancelled: number;
   }> {
     const pendingCount = await this.prisma.pedido.count({
-      where: { status: 'pendente' },
+      where: { status: 'em andamento' }, // Ajustado para 'em andamento'
     });
     const completedCount = await this.prisma.pedido.count({
       where: { status: 'concluído' },
@@ -54,12 +55,45 @@ export class DashboardService {
       where: { quantidade: { lte: lowStockThreshold } },
     });
 
-    // Se você preferir usar o campo 'estoque' da Model Variacao
-    // const lowStockVariationsCountEstoque = await this.prisma.variacao.count({
-    //   where: { estoque: { lte: lowStockThreshold } },
-    // });
+    return lowStockVariationsCountQuantidade;
+  }
 
-    // Você pode escolher qual contagem usar ou até mesmo somar as duas se fizer sentido para sua lógica de estoque
-    return lowStockVariationsCountQuantidade; // Ou lowStockVariationsCountEstoque, ou a soma
+  async getSalesPerformanceLastWeek(): Promise<
+    { name: string; Vendas: number }[]
+  > {
+    const today = new Date();
+    const lastWeekData: { [key: string]: number } = {};
+
+    for (let i = 0; i < 7; i++) {
+      const date = subDays(today, i);
+      lastWeekData[this.getDayName(date)] = 0;
+      const start = startOfDay(date);
+      const end = endOfDay(date);
+
+      const dailySales = await this.prisma.pedido.aggregate({
+        _sum: {
+          total: true,
+        },
+        where: {
+          criadoEm: {
+            // Alterado para 'criadoEm'
+            gte: start,
+            lte: end,
+          },
+          status: 'concluído',
+        },
+      });
+      lastWeekData[this.getDayName(date)] = dailySales._sum.total || 0;
+    }
+
+    // Formatar os dados para o recharts
+    return Object.keys(lastWeekData)
+      .reverse() // Inverter para mostrar do dia mais antigo para o mais recente
+      .map((day) => ({ name: day, Vendas: lastWeekData[day] }));
+  }
+
+  private getDayName(date: Date): string {
+    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    return days[date.getDay()];
   }
 }

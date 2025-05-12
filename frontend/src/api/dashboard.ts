@@ -1,4 +1,3 @@
-// src/api/dashboard.ts
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000";
@@ -13,7 +12,7 @@ export const getTotalRevenue = async (): Promise<number> => {
   const token = getToken();
   try {
     const response = await axios.get(`${API_BASE_URL}/dashboard/revenue`, {
-      headers: { Authorization: `Bearer ${token}` }, // Inclua o token no header
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error: any) {
@@ -30,7 +29,7 @@ export const getOrderCounts = async (): Promise<{
   const token = getToken();
   try {
     const response = await axios.get(`${API_BASE_URL}/dashboard/orders`, {
-      headers: { Authorization: `Bearer ${token}` }, // Inclua o token no header
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error: any) {
@@ -43,11 +42,30 @@ export const getLowStockCount = async (): Promise<number> => {
   const token = getToken();
   try {
     const response = await axios.get(`${API_BASE_URL}/dashboard/low-stock`, {
-      headers: { Authorization: `Bearer ${token}` }, // Inclua o token no header
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error: any) {
     console.error("Erro ao buscar contagem de baixo estoque:", error);
+    throw error;
+  }
+};
+
+// Nova função para buscar os dados de desempenho de vendas
+export const getSalesPerformance = async (): Promise<
+  { name: string; Vendas: number }[]
+> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/dashboard/sales-performance`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Erro ao buscar desempenho de vendas:", error);
     throw error;
   }
 };

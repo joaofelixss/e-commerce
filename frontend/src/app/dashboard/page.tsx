@@ -6,17 +6,43 @@ import { useRouter } from "next/navigation";
 import DashboardStatusCards from "@/features/dashboard/components/DashboardStatusCards";
 import DashboardNavigationLinks from "@/features/dashboard/components/DashboardNavigationLinks";
 import RecentOrdersTable from "@/features/dashboard/components/RecentOrdersTable";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { getSalesPerformance } from "@/api/dashboard"; // Importe a nova função da API
 
 const DashboardPage = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [salesData, setSalesData] = useState<
+    { name: string; Vendas: number }[]
+  >([]);
+  const [loadingSalesData, setLoadingSalesData] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
     if (token) {
       setIsLoggedIn(true);
+      setLoadingSalesData(true);
+      getSalesPerformance()
+        .then((data) => {
+          setSalesData(data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar dados de desempenho de vendas:", error);
+        })
+        .finally(() => {
+          setLoadingSalesData(false);
+        });
     } else {
       router.push("/login");
     }
@@ -28,18 +54,65 @@ const DashboardPage = () => {
   }
 
   if (!isLoggedIn) {
-    return null; // Já redirecionou para /login
+    return null;
   }
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
-      {isLoggedIn && <DashboardStatusCards />}{" "}
-      {/* Renderiza somente se isLoggedIn for true */}
-      <DashboardNavigationLinks />
-      <RecentOrdersTable />
-      <p className="text-gray-700 mt-6">Bem-vinda!</p>
-      {/* ... restante do conteúdo ... */}
+      <h1 className="text-2xl font-semibold mb-6">Visão Geral</h1>
+
+      <DashboardStatusCards />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <Card>
+          <CardContent className="h-80">
+            <h2 className="text-lg font-semibold mb-4">
+              Desempenho de Vendas (Última Semana)
+            </h2>
+            {loadingSalesData ? (
+              <div>Carregando dados do gráfico...</div>
+            ) : (
+              <ResponsiveContainer width="100%" height="80%">
+                <LineChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="Vendas"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h2 className="text-lg font-semibold mb-4">Pedidos Recentes</h2>
+            <RecentOrdersTable />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">Ações Rápidas</h2>
+        <DashboardNavigationLinks />
+      </div>
+
+      <div className="mt-8">
+        <Card>
+          <CardContent>
+            <h2 className="text-lg font-semibold mb-4">
+              Alertas de Estoque Baixo
+            </h2>
+            <div>Lista de produtos com baixo estoque aqui...</div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,8 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @ApiTags('dashboard')
 @UseGuards(JwtAuthGuard)
@@ -28,5 +29,10 @@ export class DashboardController {
   @Get('low-stock')
   async getLowStockCount() {
     return this.dashboardService.getLowStockCount();
+  }
+
+  @Get('sales-performance')
+  async getSalesPerformanceLastWeek(@Req() req: Request) {
+    return this.dashboardService.getSalesPerformanceLastWeek();
   }
 }
