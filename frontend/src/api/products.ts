@@ -49,19 +49,15 @@ export const getAllProducts = async (params?: Record<string, any>) => {
   }
 };
 
-export const getProductsByCategory = async (
-  categoriaId: string,
-  params?: Record<string, any>
-) => {
+export const getProductsByCategory = async (categoryName: string) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/produtos?categoria=${categoriaId}`,
-      { params }
-    );
+      `${API_BASE_URL}/produtos?categoria=${categoryName}`
+    ); // Adapte a URL da sua API
     return response.data;
   } catch (error: any) {
     console.error(
-      `Erro ao buscar produtos da categoria ${categoriaId}:`,
+      `Erro ao buscar produtos da categoria ${categoryName}:`,
       error
     );
     throw error;

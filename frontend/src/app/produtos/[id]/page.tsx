@@ -1,3 +1,4 @@
+// src/app/produtos/[id]/page.tsx
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -11,10 +12,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "@/components/Navbar";
 import MenuMobile from "@/components/MenuMobile";
-import RelatedProductsSection from "@/components/RelatedProductsSection";
+import RelatedProductsSection from "@/components/BarrocoCrocheSection";
 import { useFavoritesStore } from "@/store/favoritesStore";
 import ProductVariantSelector from "@/components/ProductVariantSelector";
 import { useCartStore } from "@/store/cartStore";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface Variation {
   id: string;
@@ -88,6 +92,7 @@ export default function ProductDetailPage() {
   }, [id]);
 
   useEffect(() => {
+    console.log("Page - ID:", id, "selectedColor:", selectedColor);
     if (selectedColor && product?.variacoes) {
       const selectedVariation = product.variacoes.find(
         (v) => v.cor === selectedColor
@@ -102,25 +107,49 @@ export default function ProductDetailPage() {
     }
     // Resetar a quantidade disponível ao mudar a cor
     setAvailableQuantity(undefined);
-  }, [selectedColor, product?.variacoes, product?.imagemUrl]);
+  }, [selectedColor, product?.variacoes, product?.imagemUrl, id]);
 
   useEffect(() => {
+    console.log(
+      "Page - ID:",
+      id,
+      "selectedColor:",
+      selectedColor,
+      "selectedSize:",
+      selectedSize
+    );
     if (selectedColor && selectedSize && product?.variacoes) {
       const selectedVariation = product.variacoes.find(
         (v) => v.cor === selectedColor && String(v.numero) === selectedSize
       );
       setAvailableQuantity(selectedVariation?.quantidade);
+      console.log(
+        "Page - ID:",
+        id,
+        "availableQuantity (cor e tamanho):",
+        selectedVariation?.quantidade
+      );
     } else if (selectedColor && !selectedSize && product?.variacoes) {
-      // Se apenas a cor estiver selecionada, tente encontrar a quantidade da primeira variação dessa cor
       const firstColorVariation = product.variacoes.find(
         (v) => v.cor === selectedColor
       );
       setAvailableQuantity(firstColorVariation?.quantidade);
+      console.log(
+        "Page - ID:",
+        id,
+        "availableQuantity (apenas cor):",
+        firstColorVariation?.quantidade
+      );
     } else {
-      // Se nenhuma cor ou tamanho estiver selecionado, pode ser a quantidade geral do produto (se aplicável)
       setAvailableQuantity(product?.estoque);
+      console.log(
+        "Page - ID:",
+        id,
+        "availableQuantity (nenhuma seleção):",
+        product?.estoque
+      );
     }
-  }, [selectedColor, selectedSize, product?.variacoes, product?.estoque]);
+  }, [selectedColor, selectedSize, product?.variacoes, product?.estoque, id]);
 
   const handleAddToCart = () => {
     if (!product) {
@@ -185,8 +214,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
+  const handleQuantityChange = (value: number) => {
     if (
       !isNaN(value) &&
       value > 0 &&
@@ -202,17 +230,23 @@ export default function ProductDetailPage() {
         toastConfig
       );
       setQuantityToAdd(availableQuantity);
+    } else if (value < 1) {
+      setQuantityToAdd(1); // Garante que a quantidade mínima seja 1
+    } else {
+      setQuantityToAdd(value);
     }
   };
 
   const handleColorSelect = (cor: string) => {
     setSelectedColor(cor);
     setSelectedSize(null); // Resetar o tamanho ao mudar a cor
+    console.log("Page - handleColorSelect:", cor);
   };
 
   const handleSizeSelect = useCallback(
     (size: number | undefined) => {
       setSelectedSize(String(size));
+      console.log("Page - handleSizeSelect:", size);
     },
     [setSelectedSize]
   );
@@ -263,11 +297,13 @@ export default function ProductDetailPage() {
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Coluna da Imagem */}
-          <div className="relative w-full aspect-w-1 aspect-h-1 rounded-lg overflow-hidden shadow-md">
+          <div className="relative w-full aspect-w-1 aspect-h-1 rounded-lg overflow-hidden shadow-md md:aspect-auto">
             <Image
               src={imageUrl}
               alt={product.nome}
-              layout="fill"
+              layout="responsive" // Para responsividade da imagem
+              width={500} // Largura base
+              height={500} // Altura base
               objectFit="contain"
               className="transition-opacity duration-300 ease-in-out"
             />
@@ -310,7 +346,7 @@ export default function ProductDetailPage() {
               }
             />
 
-            <div className="mt-6 flex flex-col space-y-2">
+            <div className="mt-6 flex flex-col space-y-4">
               {availableQuantity !== undefined ? (
                 availableQuantity > 0 ? (
                   <p className="text-green-500 font-semibold">
@@ -330,59 +366,70 @@ export default function ProductDetailPage() {
                 )
               )}
 
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <label
-                    htmlFor="quantity"
-                    className="font-semibold text-gray-700"
-                  >
-                    Quantidade:
-                  </label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    className="w-20 border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    value={quantityToAdd}
-                    onChange={handleQuantityChange}
-                    min="1"
-                    max={
-                      availableQuantity !== undefined
-                        ? availableQuantity
-                        : product?.estoque !== undefined
-                        ? product.estoque
-                        : 1
-                    }
-                    disabled={availableQuantity === 0}
-                  />
-                  {availableQuantity !== undefined &&
-                    availableQuantity < 5 &&
-                    availableQuantity > 0 && (
-                      <span className="text-red-500 text-sm">
-                        (Apenas {availableQuantity} disponíveis)
-                      </span>
-                    )}
-                </div>
-                <button
+              {/* Quantidade com Input Shadcn */}
+              <div className="flex items-center space-x-2">
+                <label
+                  htmlFor="quantity"
+                  className="font-semibold text-gray-700"
+                >
+                  Quantidade:
+                </label>
+                <Input
+                  type="number"
+                  id="quantity"
+                  className="w-24 text-center"
+                  value={quantityToAdd}
+                  onChange={(e) =>
+                    handleQuantityChange(parseInt(e.target.value, 10))
+                  }
+                  min="1"
+                  max={
+                    availableQuantity !== undefined
+                      ? availableQuantity
+                      : product?.estoque !== undefined
+                      ? product.estoque
+                      : 1
+                  }
+                  disabled={availableQuantity === 0}
+                />
+                {availableQuantity !== undefined &&
+                  availableQuantity < 5 &&
+                  availableQuantity > 0 && (
+                    <span className="text-red-500 text-sm">
+                      (Apenas {availableQuantity} disponíveis)
+                    </span>
+                  )}
+              </div>
+
+              {/* Botões responsivos */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
                   onClick={handleAddToCart}
-                  className={`cursor-pointer bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-colors duration-300 flex items-center ${
+                  className={cn(
+                    "w-full sm:w-auto",
                     availableQuantity === 0
-                      ? "opacity-50 cursor-not-allowed"
+                      ? "cursor-not-allowed opacity-50"
                       : ""
-                  }`}
+                  )}
                   disabled={availableQuantity === 0}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Adicionar ao Carrinho
-                </button>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-300 flex items-center"
+                </Button>
+                <Button
+                  asChild
+                  className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-300 flex items-center"
                 >
-                  <FaWhatsapp className="h-5 w-5 mr-2" />
-                  WhatsApp
-                </a>
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-grow flex items-center justify-center"
+                  >
+                    <FaWhatsapp className="h-5 w-5 mr-2" />
+                    WhatsApp
+                  </a>
+                </Button>
               </div>
             </div>
           </div>
