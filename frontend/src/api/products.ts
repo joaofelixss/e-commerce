@@ -79,3 +79,21 @@ export const searchProducts = async (
     throw error;
   }
 };
+
+export const addProduct = async (newProductData: {
+  nome: string;
+  preco: number /* Adicione outros campos aqui */;
+  imagemUrl: string;
+  categoriaId: string;
+}) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/produtos`,
+      newProductData
+    );
+    return response.data; // Retorna os dados do produto criado (opcional)
+  } catch (error: any) {
+    console.error("Erro ao adicionar novo produto:", error);
+    throw error; // Rejogue o erro para quem chamar esta função
+  }
+};

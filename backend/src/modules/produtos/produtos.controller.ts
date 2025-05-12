@@ -35,6 +35,7 @@ export class ProdutosController {
 
   @Post()
   async create(@Body() createProdutoDto: CreateProdutoDto) {
+    console.log('Dados recebidos no controller:', createProdutoDto);
     return this.produtosService.create(createProdutoDto);
   }
 

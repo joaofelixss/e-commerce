@@ -10,11 +10,15 @@ export class ProdutosService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProdutoDto: CreateProdutoDto) {
-    const { variacoes, ...produtoData } = createProdutoDto;
+    const { variacoes, categoriaId, ...produtoData } = createProdutoDto;
+    console.log('Categoria ID recebido no service:', categoriaId);
 
     return this.prisma.produto.create({
       data: {
         ...produtoData,
+        categoria: {
+          connect: { id: categoriaId }, // Conecta à categoria existente pelo ID
+        },
         variacoes: {
           createMany: {
             data:
