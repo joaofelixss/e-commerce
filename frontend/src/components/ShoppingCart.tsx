@@ -87,6 +87,12 @@ const ShoppingCart = () => {
               </div>
               <div className="flex-grow">
                 <h3 className="text-lg font-semibold mb-1">{item.nome}</h3>
+                {item.cor && (
+                  <p className="text-gray-500 mb-1">Cor: {item.cor}</p>
+                )}
+                {item.tamanho && (
+                  <p className="text-gray-500 mb-1">Tamanho: {item.tamanho}</p>
+                )}
                 <p className="text-gray-600 mb-2">
                   Preço: R$ {item.preco.toFixed(2)}
                 </p>

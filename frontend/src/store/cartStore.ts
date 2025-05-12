@@ -1,4 +1,3 @@
-// frontend/src/store/cartStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -8,6 +7,8 @@ interface CartItem {
   preco: number;
   quantidade: number;
   imagemUrl: string;
+  cor?: string | null;
+  tamanho?: string | null;
 }
 
 interface CartState {
@@ -26,15 +27,24 @@ export const useCartStore = create<CartState>()(
       items: [],
       addItem: (item) =>
         set((state) => {
-          const existingItem = state.items.find((i) => i.id === item.id);
+          const existingItem = state.items.find(
+            (i) =>
+              i.id === item.id &&
+              i.cor === item.cor &&
+              i.tamanho === item.tamanho
+          );
           if (existingItem) {
             return {
               items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantidade: i.quantidade + 1 } : i
+                i.id === item.id &&
+                i.cor === item.cor &&
+                i.tamanho === item.tamanho
+                  ? { ...i, quantidade: i.quantidade + item.quantidade }
+                  : i
               ),
             };
           } else {
-            return { items: [...state.items, { ...item, quantidade: 1 }] };
+            return { items: [...state.items, { ...item }] };
           }
         }),
       removeItem: (id) =>
@@ -57,8 +67,7 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [] }),
     }),
     {
-      name: "shopping-cart", // Nome da chave no localStorage onde os dados serão salvos
-      // getStorage: () => localStorage, // Por padrão, usa localStorage
+      name: "shopping-cart",
     }
   )
 );

@@ -14,6 +14,7 @@ import MenuMobile from "@/components/MenuMobile";
 import RelatedProductsSection from "@/components/RelatedProductsSection";
 import { useFavoritesStore } from "@/store/favoritesStore";
 import ProductVariantSelector from "@/components/ProductVariantSelector";
+import { useCartStore } from "@/store/cartStore";
 
 interface Variation {
   id: string;
@@ -30,6 +31,7 @@ interface ProductDetails {
   id: string;
   nome: string;
   preco: number;
+  estoque: number;
   imagemUrl: string | null | undefined;
   categoriaId: string;
   criadoEm: string;
@@ -58,6 +60,11 @@ export default function ProductDetailPage() {
   >(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantityToAdd, setQuantityToAdd] = useState(1);
+  const [availableQuantity, setAvailableQuantity] = useState<
+    number | undefined
+  >(undefined);
+
+  const addItemToCart = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -88,31 +95,71 @@ export default function ProductDetailPage() {
       if (selectedVariation?.imagemUrl) {
         setDisplayedImageUrl(selectedVariation.imagemUrl);
       } else {
-        setDisplayedImageUrl(product?.imagemUrl); // Se não houver imagem para a cor, volta para a principal
+        setDisplayedImageUrl(product?.imagemUrl);
       }
     } else if (!selectedColor) {
-      setDisplayedImageUrl(product?.imagemUrl); // Se nenhuma cor estiver selecionada, mostra a principal
+      setDisplayedImageUrl(product?.imagemUrl);
     }
+    // Resetar a quantidade disponível ao mudar a cor
+    setAvailableQuantity(undefined);
   }, [selectedColor, product?.variacoes, product?.imagemUrl]);
 
+  useEffect(() => {
+    if (selectedColor && selectedSize && product?.variacoes) {
+      const selectedVariation = product.variacoes.find(
+        (v) => v.cor === selectedColor && String(v.numero) === selectedSize
+      );
+      setAvailableQuantity(selectedVariation?.quantidade);
+    } else if (selectedColor && !selectedSize && product?.variacoes) {
+      // Se apenas a cor estiver selecionada, tente encontrar a quantidade da primeira variação dessa cor
+      const firstColorVariation = product.variacoes.find(
+        (v) => v.cor === selectedColor
+      );
+      setAvailableQuantity(firstColorVariation?.quantidade);
+    } else {
+      // Se nenhuma cor ou tamanho estiver selecionado, pode ser a quantidade geral do produto (se aplicável)
+      setAvailableQuantity(product?.estoque);
+    }
+  }, [selectedColor, selectedSize, product?.variacoes, product?.estoque]);
+
   const handleAddToCart = () => {
-    if (product) {
+    if (!product) {
+      toast.error("Erro ao adicionar ao carrinho: produto não encontrado.");
+      return;
+    }
+
+    // Verifica se o produto tem variações de tamanho (numero !== null)
+    const hasSizes = product.variacoes.some((v) => v.numero !== null);
+
+    // Se tiver tamanhos e nenhum tamanho foi selecionado
+    if (hasSizes && !selectedSize) {
+      toast.error(
+        "Por favor, selecione um tamanho antes de adicionar ao carrinho."
+      );
+      return;
+    }
+
+    if (availableQuantity !== undefined && availableQuantity > 0) {
       const itemToAdd = {
         id: product.id,
         nome: product.nome,
         preco: product.preco,
-        imagemUrl: displayedImageUrl || "", // Use displayedImageUrl aqui
+        imagemUrl: displayedImageUrl || "",
         quantidade: quantityToAdd,
         cor: selectedColor,
         tamanho: selectedSize,
       };
-      // @ts-ignore
       addItemToCart(itemToAdd);
-      toast.success(`${product.nome} adicionado ao carrinho!`, {
-        ...toastConfig,
-      });
+      toast.success(
+        `${product.nome} (Cor: ${selectedColor || "N/A"}, Tamanho: ${
+          selectedSize || "N/A"
+        }) adicionado ao carrinho!`,
+        {
+          ...toastConfig,
+        }
+      );
     } else {
-      toast.error("Erro ao adicionar ao carrinho.");
+      toast.error("Produto indisponível com a seleção feita.");
     }
   };
 
@@ -143,24 +190,29 @@ export default function ProductDetailPage() {
     if (
       !isNaN(value) &&
       value > 0 &&
-      product?.estoque !== undefined &&
-      value <= product.estoque
+      availableQuantity !== undefined &&
+      value <= availableQuantity
     ) {
       setQuantityToAdd(value);
-    } else if (!isNaN(value) && value > 0 && product?.estoque === undefined) {
+    } else if (!isNaN(value) && value > 0 && availableQuantity === undefined) {
       setQuantityToAdd(value);
+    } else if (availableQuantity !== undefined && value > availableQuantity) {
+      toast.error(
+        `A quantidade máxima disponível é ${availableQuantity}.`,
+        toastConfig
+      );
+      setQuantityToAdd(availableQuantity);
     }
   };
 
   const handleColorSelect = (cor: string) => {
     setSelectedColor(cor);
-    // Opcional: resetar a seleção de tamanho ao mudar de cor
-    // setSelectedSize(null);
+    setSelectedSize(null); // Resetar o tamanho ao mudar a cor
   };
+
   const handleSizeSelect = useCallback(
     (size: number | undefined) => {
       setSelectedSize(String(size));
-      // Lógica adicional se a imagem mudar por tamanho
     },
     [setSelectedSize]
   );
@@ -197,16 +249,11 @@ export default function ProductDetailPage() {
   }
 
   const imageUrl = getProductImageUrl(displayedImageUrl);
-  const whatsappNumber = "SEU_NUMERO_DE_WHATSAPP";
+  const whatsappNumber = "5569992784621";
   const whatsappMessage = `Olá! Gostaria de saber mais sobre o produto: ${product.nome} (ID: ${product.id})`;
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     whatsappMessage
   )}`;
-
-  // Código antes do return
-  console.log("Produto:", product);
-  console.log("Cor Selecionada:", selectedColor);
-  console.log("URL da Imagem Exibida:", displayedImageUrl);
 
   return (
     <div>
@@ -218,10 +265,7 @@ export default function ProductDetailPage() {
           {/* Coluna da Imagem */}
           <div className="relative w-full aspect-w-1 aspect-h-1 rounded-lg overflow-hidden shadow-md">
             <Image
-              src={
-                imageUrl ||
-                "https://via.placeholder.com/400/EEEEEE/000000?Text=Sem+Imagem"
-              }
+              src={imageUrl}
               alt={product.nome}
               layout="fill"
               objectFit="contain"
@@ -248,116 +292,12 @@ export default function ProductDetailPage() {
               R$ {product.preco.toFixed(2)}
             </p>
 
-            {product.variacoes && product.variacoes.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Cores
-                </h3>
-                <div className="flex items-center space-x-3">
-                  {product.variacoes.map((variacao) => (
-                    <button
-                      key={variacao.id}
-                      className={`w-8 h-8 rounded-full shadow-md focus:outline-none ${
-                        selectedColor === variacao.cor
-                          ? "ring-2 ring-indigo-500"
-                          : ""
-                      }`}
-                      style={{ backgroundColor: variacao.cor }}
-                      onClick={() => handleColorSelect(variacao.cor)}
-                      aria-label={`Selecionar cor ${variacao.cor}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {product.variacoes &&
-              Array.from(
-                new Set(product.variacoes.map((v) => v.numero).filter(Boolean))
-              )
-                .sort(
-                  (a, b) => (a === null || b === null ? 0 : a - b) as number
-                )
-                .map((tamanho) => (
-                  <div key={`tamanho-${tamanho}`} className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Tamanhos
-                    </h3>
-                    <div className="flex items-center space-x-3">
-                      {product.variacoes
-                        .filter((v) => v.numero === tamanho)
-                        .map((variacao) => (
-                          <button
-                            key={variacao.id}
-                            className={`py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                              selectedSize === String(variacao.numero)
-                                ? "bg-indigo-100 text-indigo-700"
-                                : ""
-                            }`}
-                            onClick={() =>
-                              setSelectedSize(String(variacao.numero))
-                            }
-                          >
-                            {tamanho}
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-
-            <div className="mt-6 flex items-center space-x-4">
-              {product.estoque !== undefined && product.estoque > 0 ? (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <label
-                      htmlFor="quantity"
-                      className="font-semibold text-gray-700"
-                    >
-                      Quantidade:
-                    </label>
-                    <input
-                      type="number"
-                      id="quantity"
-                      className="w-20 border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      value={quantityToAdd}
-                      onChange={handleQuantityChange}
-                      min="1"
-                      max={product.estoque}
-                    />
-                    {product.estoque < 5 && (
-                      <span className="text-red-500 text-sm">
-                        (Apenas {product.estoque} disponíveis)
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={handleAddToCart}
-                    className="cursor-pointer bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-colors duration-300 flex items-center"
-                  >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    Adicionar ao Carrinho
-                  </button>
-                </>
-              ) : (
-                <p className="text-red-600 font-semibold">
-                  Produto indisponível no momento.
-                </p>
-              )}
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-300 flex items-center"
-              >
-                <FaWhatsapp className="h-5 w-5 mr-2" />
-                WhatsApp
-              </a>
-            </div>
             <ProductVariantSelector
               variants={product.variacoes.map((v) => ({
                 cor: v.cor,
                 numero: v.numero,
                 imagemUrl: v.imagemUrl,
+                disponivel: v.quantidade > 0, // Adiciona a disponibilidade com base na quantidade
               }))}
               onColorSelect={handleColorSelect}
               onNumberSelect={handleSizeSelect}
@@ -369,6 +309,82 @@ export default function ProductDetailPage() {
                   : product.variacoes[0]?.numero
               }
             />
+
+            <div className="mt-6 flex flex-col space-y-2">
+              {availableQuantity !== undefined ? (
+                availableQuantity > 0 ? (
+                  <p className="text-green-500 font-semibold">
+                    {availableQuantity} unidades disponíveis
+                  </p>
+                ) : (
+                  <p className="text-red-600 font-semibold">
+                    Produto indisponível com a seleção feita.
+                  </p>
+                )
+              ) : (
+                product.estoque !== undefined && (
+                  <p className="text-gray-500">
+                    Estoque geral: {product.estoque} unidades (selecione cor e
+                    tamanho para ver a disponibilidade específica)
+                  </p>
+                )
+              )}
+
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <label
+                    htmlFor="quantity"
+                    className="font-semibold text-gray-700"
+                  >
+                    Quantidade:
+                  </label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    className="w-20 border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={quantityToAdd}
+                    onChange={handleQuantityChange}
+                    min="1"
+                    max={
+                      availableQuantity !== undefined
+                        ? availableQuantity
+                        : product?.estoque !== undefined
+                        ? product.estoque
+                        : 1
+                    }
+                    disabled={availableQuantity === 0}
+                  />
+                  {availableQuantity !== undefined &&
+                    availableQuantity < 5 &&
+                    availableQuantity > 0 && (
+                      <span className="text-red-500 text-sm">
+                        (Apenas {availableQuantity} disponíveis)
+                      </span>
+                    )}
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className={`cursor-pointer bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-colors duration-300 flex items-center ${
+                    availableQuantity === 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  disabled={availableQuantity === 0}
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Adicionar ao Carrinho
+                </button>
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-300 flex items-center"
+                >
+                  <FaWhatsapp className="h-5 w-5 mr-2" />
+                  WhatsApp
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
