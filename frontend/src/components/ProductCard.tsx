@@ -84,9 +84,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
     <div
       className={`bg-white rounded-md shadow-md p-4 flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${className}`}
     >
-      <div className="relative w-full h-48 mb-2 cursor-pointer">
+      <div className="relative w-full h-32 mb-2 cursor-pointer sm:h-48">
+        {" "}
+        {/* Ajustado a altura inicial para mobile */}
         <Link
-          href={`/produtos/${product.id}`} // Use uma rota padrão aqui, a página de favoritos usará o slug correto
+          href={`/produtos/${product.id}`}
           className="absolute inset-0 z-10"
         ></Link>
         <Image
