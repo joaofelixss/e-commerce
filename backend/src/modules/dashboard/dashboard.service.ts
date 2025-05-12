@@ -96,4 +96,79 @@ export class DashboardService {
     const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     return days[date.getDay()];
   }
+  async getRecentOrders(limit: number): Promise<
+    {
+      id: string;
+      customerName: string;
+      orderDate: Date;
+      status: string;
+      total: number;
+    }[]
+  > {
+    const recentOrders = await this.prisma.pedido.findMany({
+      take: limit,
+      orderBy: {
+        criadoEm: 'desc',
+      },
+      select: {
+        id: true,
+        cliente: {
+          select: {
+            nome: true,
+          },
+        },
+        criadoEm: true,
+        status: true,
+        total: true,
+      },
+    });
+
+    return recentOrders.map((order) => ({
+      id: order.id,
+      customerName: order.cliente?.nome || 'Cliente Desconhecido',
+      orderDate: order.criadoEm,
+      status: order.status,
+      total: order.total, // Converter BigInt para Number se necessário
+    }));
+  }
+  async getLowStockProducts(): Promise<
+    {
+      id: string;
+      nome: string;
+      variacao?: { cor?: string; numero?: number };
+      quantidade: number;
+      nivelMinimo?: number;
+    }[]
+  > {
+    const lowStockThreshold = 5; // Defina o seu limite de baixo estoque
+
+    const lowStockVariations = await this.prisma.variacao.findMany({
+      where: {
+        quantidade: { lte: lowStockThreshold },
+      },
+      include: {
+        produto: {
+          select: {
+            nome: true,
+          },
+        },
+      },
+      orderBy: [
+        { produto: { nome: 'asc' } },
+        { cor: 'asc' },
+        { numero: 'asc' },
+      ],
+    });
+
+    return lowStockVariations.map((variacao) => ({
+      id: variacao.id,
+      nome: variacao.produto.nome,
+      variacao: {
+        cor: variacao.cor || undefined,
+        numero: variacao.numero || undefined,
+      },
+      quantidade: variacao.quantidade,
+      nivelMinimo: variacao.nivelMinimo || undefined,
+    }));
+  }
 }

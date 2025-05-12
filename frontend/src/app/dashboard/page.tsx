@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import DashboardStatusCards from "@/features/dashboard/components/DashboardStatusCards";
 import DashboardNavigationLinks from "@/features/dashboard/components/DashboardNavigationLinks";
 import RecentOrdersTable from "@/features/dashboard/components/RecentOrdersTable";
+import LowStockAlerts from "@/features/dashboard/components/LowStockAlerts"; // Importe o componente
 import { Card, CardContent } from "@/components/ui/card";
 import {
   LineChart,
@@ -16,7 +17,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { getSalesPerformance } from "@/api/dashboard"; // Importe a nova função da API
+import { getSalesPerformance } from "@/api/dashboard";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -104,14 +105,8 @@ const DashboardPage = () => {
       </div>
 
       <div className="mt-8">
-        <Card>
-          <CardContent>
-            <h2 className="text-lg font-semibold mb-4">
-              Alertas de Estoque Baixo
-            </h2>
-            <div>Lista de produtos com baixo estoque aqui...</div>
-          </CardContent>
-        </Card>
+        <LowStockAlerts />{" "}
+        {/* Renderiza o componente de alertas de estoque baixo */}
       </div>
     </div>
   );

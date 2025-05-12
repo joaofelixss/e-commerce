@@ -1,5 +1,5 @@
 // frontend/features/dashboard/components/RecentOrdersTable.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { getRecentOrders } from "@/api/dashboard"; // Importe a função da API
 
 interface RecentOrder {
   id: string;
@@ -26,37 +27,35 @@ const statusColors = {
 };
 
 const RecentOrdersTable = () => {
-  // Aqui você buscará os dados reais dos pedidos recentes do seu backend
-  const recentOrders: RecentOrder[] = [
-    {
-      id: "1",
-      customerName: "Ana Silva",
-      orderDate: new Date(),
-      status: "concluído",
-      total: 75.5,
-    },
-    {
-      id: "2",
-      customerName: "Pedro Oliveira",
-      orderDate: new Date(Date.now() - 86400000),
-      status: "pendente",
-      total: 32.0,
-    },
-    {
-      id: "3",
-      customerName: "Mariana Souza",
-      orderDate: new Date(Date.now() - 172800000),
-      status: "concluído",
-      total: 120.99,
-    },
-    {
-      id: "4",
-      customerName: "Lucas Pereira",
-      orderDate: new Date(Date.now() - 259200000),
-      status: "cancelado",
-      total: 15.0,
-    },
-  ];
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoadingOrders(true);
+    getRecentOrders()
+      .then((data) => {
+        setRecentOrders(
+          data.map((order) => ({
+            ...order,
+            orderDate: new Date(order.orderDate), // Converter string para Date
+          }))
+        );
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar pedidos recentes:", err);
+        setError("Erro ao carregar os pedidos recentes.");
+      })
+      .finally(() => setLoadingOrders(false));
+  }, []);
+
+  if (loadingOrders) {
+    return <div>Carregando pedidos recentes...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <div className="mt-6">
@@ -90,7 +89,7 @@ const RecentOrdersTable = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {recentOrders.length === 0 && (
+            {recentOrders.length === 0 && !loadingOrders && !error && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-4">
                   Nenhum pedido recente encontrado.

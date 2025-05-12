@@ -69,3 +69,54 @@ export const getSalesPerformance = async (): Promise<
     throw error;
   }
 };
+
+export const getRecentOrders = async (
+  limit: number = 5
+): Promise<
+  {
+    id: string;
+    customerName: string;
+    orderDate: Date;
+    status: "pendente" | "concluído" | "cancelado";
+    total: number;
+  }[]
+> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/dashboard/recent-orders?limit=${limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Erro ao buscar pedidos recentes:", error);
+    throw error;
+  }
+};
+
+export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/dashboard/low-stock-products`,
+      {
+        // Nova rota no backend
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Erro ao buscar produtos com baixo estoque:", error);
+    throw error;
+  }
+};
+
+interface LowStockProduct {
+  id: string;
+  nome: string;
+  variacao?: { cor?: string; numero?: number };
+  quantidade: number;
+  nivelMinimo?: number;
+}
