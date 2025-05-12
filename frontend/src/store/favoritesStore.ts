@@ -4,35 +4,55 @@ import { persist } from "zustand/middleware";
 
 interface FavoriteItem {
   id: string;
-  // Você pode adicionar outras propriedades do produto se necessário
+  imagemUrl: string; // Adicione a propriedade imagemUrl
+  slug: string; // Adicione a propriedade slug
+  nome: string; // Adicione a propriedade nome (opcional, mas útil)
+  // Adicione outras propriedades relevantes do produto que você precisa exibir
 }
 
 interface FavoritesState {
   items: FavoriteItem[];
-  addItem: (id: string) => void;
+  addItem: (product: {
+    id: string;
+    imagemUrl: string;
+    slug: string;
+    nome: string;
+  }) => void; // Aceita o objeto do produto
   removeItem: (id: string) => void;
   isFavorite: (id: string) => boolean;
+  clearFavorites: () => void; // Adicione a função para limpar os favoritos
 }
 
 export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (id) =>
+      addItem: (product) =>
         set((state) => {
-          if (!state.items.find((item) => item.id === id)) {
-            return { items: [...state.items, { id }] };
+          if (!state.items.find((item) => item.id === product.id)) {
+            return {
+              items: [
+                ...state.items,
+                {
+                  id: product.id,
+                  imagemUrl: product.imagemUrl,
+                  slug: product.slug,
+                  nome: product.nome,
+                },
+              ],
+            };
           }
-          return state; // Se já estiver nos favoritos, não faz nada
+          return state;
         }),
       removeItem: (id) =>
         set((state) => ({
           items: state.items.filter((item) => item.id !== id),
         })),
       isFavorite: (id) => !!get().items.find((item) => item.id === id),
+      clearFavorites: () => set({ items: [] }), // Implementa a função clearFavorites
     }),
     {
-      name: "favorites", // Nome da chave no localStorage
+      name: "favorites",
     }
   )
 );

@@ -70,9 +70,9 @@ const HomePage = () => {
   }
 
   const banners: Banner[] = [
-    { id: 1, img: "/images/banner-1.png", link: "/ptodutos" },
+    { id: 1, img: "/images/banner-1.png", link: "/produtos" },
     { id: 2, img: "/images/banner-2.png", link: "/produtos" },
-    { id: 3, img: "/images/banner-3.png", link: "/roupas" },
+    { id: 3, img: "/images/banner-3.png", link: "/produtos/4" },
   ];
   const infoItems = [
     {
@@ -160,7 +160,7 @@ const HomePage = () => {
         {isMobile ? (
           <motion.div
             ref={carouselRef}
-            className="overflow-x-auto overflow-x-hidden whitespace-nowrap scroll-smooth snap-x snap-mandatory -ml-4 pl-4"
+            className="overflow-x-auto-hidden whitespace-nowrap scroll-smooth snap-x snap-mandatory -ml-4 pl-4"
             variants={containerVariants}
           >
             {destaques.length > 0 ? (

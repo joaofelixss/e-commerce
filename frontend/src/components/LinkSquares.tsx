@@ -11,7 +11,7 @@ const LinkSquares = () => {
       {/* 4 Quadrados Contêineres com Links */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
         <Link
-          href="/barbantes"
+          href="/produtos/1"
           className="transition-transform duration-300 hover:scale-105"
         >
           <Image
@@ -23,7 +23,7 @@ const LinkSquares = () => {
           />
         </Link>
         <Link
-          href="/croches"
+          href="/produtos/3"
           className="transition-transform duration-300 hover:scale-105"
         >
           <Image
@@ -35,7 +35,7 @@ const LinkSquares = () => {
           />
         </Link>
         <Link
-          href="/barrocos"
+          href="/produtos/2"
           className="transition-transform duration-300 hover:scale-105"
         >
           <Image
@@ -47,7 +47,7 @@ const LinkSquares = () => {
           />
         </Link>
         <Link
-          href="/roupas"
+          href="/produtos/4"
           className="transition-transform duration-300 hover:scale-105"
         >
           <Image

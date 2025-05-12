@@ -16,6 +16,7 @@ interface Product {
   nome: string;
   preco: number;
   imagemUrl: string | null | undefined;
+  slug?: string; // Adicione a propriedade slug à interface Product (se existir)
 }
 
 interface ProductCardProps {
@@ -52,7 +53,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
       removeItemFromFavorites(productId);
       toast.error("Removido dos favoritos!", { ...toastConfig });
     } else {
-      addItemToFavorites(productId);
+      addItemToFavorites({
+        id: product.id,
+        imagemUrl: product.imagemUrl || "", // Garanta que não seja undefined
+        slug: product.slug || `/produtos/${product.id}`, // Use slug se existir, senão uma rota padrão
+        nome: product.nome,
+      });
       toast.success("Adicionado aos favoritos!", { ...toastConfig });
     }
   };
@@ -80,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
     >
       <div className="relative w-full h-48 mb-2 cursor-pointer">
         <Link
-          href={`/produtos/${product.id}`}
+          href={`/produtos/${product.id}`} // Use uma rota padrão aqui, a página de favoritos usará o slug correto
           className="absolute inset-0 z-10"
         ></Link>
         <Image
@@ -92,7 +98,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
         />
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-2 right-2 text-gray-500 hover:text-red-500 focus:outline-none z-20 transition-transform duration-200 hover:translate-y-[-2px]" // Adicionando transição e translate-y
+          className="absolute top-2 right-2 text-gray-500 hover:text-red-500 focus:outline-none z-20 transition-transform duration-200 hover:translate-y-[-2px]"
         >
           {isCurrentlyFavorite ? (
             <Heart className="h-6 w-6 fill-red-500" />
