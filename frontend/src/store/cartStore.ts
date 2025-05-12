@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface CartItem {
+export interface CartItem {
   id: string;
   nome: string;
   preco: number;
@@ -47,9 +47,12 @@ export const useCartStore = create<CartState>()(
             return { items: [...state.items, { ...item }] };
           }
         }),
-      removeItem: (id) =>
+      removeItem: (id: string, cor?: string | null, tamanho?: string | null) =>
         set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
+          items: state.items.filter(
+            (item) =>
+              !(item.id === id && item.cor === cor && item.tamanho === tamanho)
+          ),
         })),
       updateQuantity: (id, quantity) =>
         set((state) => ({

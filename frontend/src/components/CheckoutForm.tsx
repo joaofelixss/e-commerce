@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore, CartItem } from "@/store/cartStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast, Toaster } from "sonner"; // Import Toaster também
+import { toast, Toaster } from "sonner";
 import { FaWhatsapp } from "react-icons/fa";
+import WhatsappMessageGenerator from "@/components/WhatsappMessageGenerator"; // Import o componente
 
 interface ViaCepResponse {
   cep: string;
@@ -210,44 +211,31 @@ const CheckoutForm = () => {
         return;
       }
 
-      const orderDetails = cartItems
-        .map(
-          (item) =>
-            `- ${item.quantidade} x ${item.nome} - R$ ${(
-              item.preco * item.quantidade
-            ).toFixed(2)}`
-        )
-        .join("\n");
+      const whatsappMessage = WhatsappMessageGenerator({
+        name,
+        phone,
+        desejaEntrega,
+        cep,
+        endereco,
+        numero,
+        complemento,
+        bairro,
+        cidade,
+        uf,
+        frete,
+        cartItems: cartItems as CartItem[], // Garante que o tipo está correto
+        totalComFrete,
+        formaPagamento,
+        notes,
+      });
 
-      const total = totalComFrete.toFixed(2);
-
-      let message = `Olá! Gostaria de fazer o seguinte pedido:\n\n*Dados do Cliente:*\nNome: ${name}\nTelefone: ${phone}\n\n`;
-
-      if (desejaEntrega) {
-        message += `*Entrega:*\nSim\nCEP: ${cep}\nEndereço: ${endereco}, ${numero} ${
-          complemento ? `(Complemento: ${complemento})` : ""
-        }\nBairro: ${bairro}\nCidade: ${cidade} - ${uf}\nFrete: R$ ${frete.toFixed(
-          2
-        )}\n\n`;
-      } else {
-        message += `*Entrega:*\nNão (Retirada no local)\n\n`;
-      }
-
-      message += `*Itens do Pedido:*\n${orderDetails}\n\n*Total do Pedido: R$ ${total}*\n\n*Forma de Pagamento:* ${
-        formaPagamento === "dinheiro"
-          ? "Dinheiro"
-          : formaPagamento === "pix"
-          ? "Pix"
-          : "Cartão"
-      }\n\nObservações: ${notes}`;
-      const encodedMessage = encodeURIComponent(message);
       window.open(
-        `https://wa.me/5569992784621?text=${encodedMessage}`,
+        `https://wa.me/5569992784621?text=${whatsappMessage}`,
         "_blank"
       );
 
       clearCart();
-      router.push("/pedido-enviado"); // Podemos criar uma página de "Pedido Enviado" depois
+      router.push("/pedido-enviado");
     } else {
       toast.error("Por favor, corrija os erros no formulário.");
     }
@@ -255,7 +243,7 @@ const CheckoutForm = () => {
 
   return (
     <Card className="max-w-md mx-auto mt-8 mb-15 p-4">
-      <Toaster richColors /> {/* Adicione o Toaster aqui */}
+      <Toaster richColors />
       <CardTitle className="text-xl text-center font-semibold mb-4">
         Coloque seus dados
       </CardTitle>

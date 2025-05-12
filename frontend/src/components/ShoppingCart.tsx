@@ -1,14 +1,9 @@
 "use client";
 
 import React from "react";
-import { useCartStore } from "@/store/cartStore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/cartStore";
 import {
   Trash2,
   Plus,
@@ -16,8 +11,25 @@ import {
   ShoppingCart as ShoppingCartIcon,
   ArrowLeft,
   CheckCircle, // Ícone para Finalizar Pedido
+  XCircle, // Ícone para Limpar Carrinho
 } from "lucide-react";
-import { Toaster, toast } from "sonner";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+interface CartItem {
+  id: string;
+  nome: string;
+  preco: number;
+  quantidade: number;
+  imagemUrl: string;
+  cor?: string | null;
+  tamanho?: string | null;
+}
 
 const ShoppingCart = () => {
   const router = useRouter();
@@ -26,11 +38,22 @@ const ShoppingCart = () => {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const totalItemsCount = useCartStore((state) => state.totalItems);
   const totalPrice = useCartStore((state) => state.totalPrice);
+  const clearCart = useCartStore((state) => state.clearCart);
 
-  const handleRemoveItem = (itemId: string) => {
-    removeItemFromCart(itemId);
+  const handleRemoveItem = (
+    itemId: string,
+    cor?: string | null,
+    tamanho?: string | null
+  ) => {
+    removeItemFromCart(itemId, cor, tamanho);
     toast.error("Produto removido do carrinho!", {
-      duration: 3000,
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
     });
   };
 
@@ -38,9 +61,32 @@ const ShoppingCart = () => {
     updateQuantity(itemId, newQuantity);
     if (newQuantity > 1) {
       toast.success("Quantidade do produto atualizada!", {
-        duration: 3000,
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
     }
+  };
+
+  const handleViewDetails = (itemId: string) => {
+    router.push(`/produtos/${itemId}`);
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    toast.success("Carrinho limpo com sucesso!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   if (cartItems.length === 0) {
@@ -61,16 +107,33 @@ const ShoppingCart = () => {
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
-      <Toaster richColors />
-      <h2 className="text-2xl font-semibold mb-6 flex items-center">
-        <ShoppingCartIcon className="mr-2 w-6 h-6" />
-        Carrinho de Compras
+      <ToastContainer />
+      <h2 className="text-2xl font-semibold mb-6 flex items-center justify-between">
+        <div className="flex items-center">
+          <ShoppingCartIcon className="mr-2 w-6 h-6" />
+          Carrinho de Compras
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleClearCart}
+          className="rounded-full"
+        >
+          <XCircle className="mr-2 w-4 h-4" />
+          Limpar Carrinho
+        </Button>
       </h2>
       <div className="space-y-4">
         {cartItems.map((item) => (
-          <Card key={item.id} className="border shadow-md">
+          <Card
+            key={`${item.id}-${item.cor}-${item.tamanho}`}
+            className="border shadow-md"
+          >
             <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4">
-              <div className="relative w-24 h-24 sm:w-32 sm:h-32 mr-4 mb-4 sm:mb-0">
+              <div
+                onClick={() => handleViewDetails(item.id)}
+                className="relative w-24 h-24 sm:w-32 sm:h-32 mr-4 mb-4 sm:mb-0 cursor-pointer"
+              >
                 <Image
                   src={
                     item.imagemUrl
@@ -86,7 +149,12 @@ const ShoppingCart = () => {
                 />
               </div>
               <div className="flex-grow">
-                <h3 className="text-lg font-semibold mb-1">{item.nome}</h3>
+                <h3
+                  onClick={() => handleViewDetails(item.id)}
+                  className="text-lg font-semibold mb-1 cursor-pointer hover:underline"
+                >
+                  {item.nome}
+                </h3>
                 {item.cor && (
                   <p className="text-gray-500 mb-1">Cor: {item.cor}</p>
                 )}
@@ -143,7 +211,9 @@ const ShoppingCart = () => {
                 <Button
                   variant="destructive"
                   size="icon"
-                  onClick={() => handleRemoveItem(item.id)}
+                  onClick={() =>
+                    handleRemoveItem(item.id, item.cor, item.tamanho)
+                  }
                   className="rounded-full"
                 >
                   <Trash2 className="h-5 w-5" />
