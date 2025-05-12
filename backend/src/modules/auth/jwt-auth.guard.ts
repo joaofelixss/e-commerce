@@ -24,7 +24,7 @@ interface RequestWithHeaders extends Request {
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   private readonly logger = new Logger(JwtAuthGuard.name);
-  private readonly adminUsername = 'maeDoFelix'; // Defina o nome de usuário do administrador AQUI!
+  private readonly adminUsername = 'sonia'; // Defina o nome de usuário do administrador AQUI!
 
   constructor(private jwtService: JwtService) {}
 

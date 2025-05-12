@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react"; // Importe o ícone de seta para a esquerda
+import { ArrowLeft } from "lucide-react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ const LoginPage = () => {
   };
 
   const handleBack = () => {
-    router.back(); // Função para voltar à página anterior
+    router.back();
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -37,17 +37,27 @@ const LoginPage = () => {
 
     setIsLoading(true);
 
-    // Simulação de login (substitua pela sua lógica real de backend)
     try {
-      console.log("Tentativa de login:", { email, password });
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simula uma chamada de API
+      const response = await fetch("http://localhost:3000/auth/login", {
+        // Sua rota de login no backend
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, senha: password }),
+      });
 
-      if (email === "mae@exemplo.com" && password === "senha123") {
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login bem-sucedido
+        const accessToken = data.access_token; // Assumindo que o token é retornado como "accessToken"
+        localStorage.setItem("accessToken", accessToken); // Armazena o token
         toast.success("Login realizado com sucesso!");
-        localStorage.setItem("isLoggedIn", "true"); // Salva no localStorage
-        router.push("/dashboard"); // Redirecionamento IMEDIATO para o dashboard após o sucesso
+        router.push("/dashboard"); // Redirecionamento para o dashboard
       } else {
-        toast.error("Credenciais inválidas.");
+        // Falha no login
+        toast.error(data.message || "Credenciais inválidas."); // Exibe a mensagem de erro da API
       }
     } catch (error: any) {
       toast.error(error.message || "Ocorreu um erro ao tentar fazer login.");

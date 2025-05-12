@@ -160,7 +160,7 @@ const HomePage = () => {
         {isMobile ? (
           <motion.div
             ref={carouselRef}
-            className="overflow-x-auto-hidden whitespace-nowrap scroll-smooth snap-x snap-mandatory -ml-4 pl-4"
+            className="overflow-x-auto overflow-x-hidden whitespace-nowrap scroll-smooth snap-x snap-mandatory -ml-4 pl-4"
             variants={containerVariants}
           >
             {destaques.length > 0 ? (

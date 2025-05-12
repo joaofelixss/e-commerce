@@ -1,33 +1,45 @@
 // frontend/pages/dashboard.tsx
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import DashboardStatusCards from "@/features/dashboard/components/DashboardStatusCards";
+import DashboardNavigationLinks from "@/features/dashboard/components/DashboardNavigationLinks";
+import RecentOrdersTable from "@/features/dashboard/components/RecentOrdersTable";
 
 const DashboardPage = () => {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const token = localStorage.getItem("accessToken");
 
-    if (!isLoggedIn) {
-      router.push("/login"); // Redireciona para a página de login se não estiver logado
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      router.push("/login");
     }
-    // Se você fosse buscar dados do usuário, faria isso aqui
+    setLoadingAuth(false);
   }, [router]);
+
+  if (loadingAuth) {
+    return <div>Verificando autenticação...</div>;
+  }
+
+  if (!isLoggedIn) {
+    return null; // Já redirecionou para /login
+  }
 
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
-      <p className="text-gray-700">Bem-vinda!</p>
-      {/* Adicione aqui o conteúdo do dashboard que sua mãe precisa ver */}
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Informações</h2>
-        <ul className="list-disc list-inside">
-          <li>Você está logado.</li>
-        </ul>
-      </div>
-      {/* Adicione mais seções conforme necessário */}
+      {isLoggedIn && <DashboardStatusCards />}{" "}
+      {/* Renderiza somente se isLoggedIn for true */}
+      <DashboardNavigationLinks />
+      <RecentOrdersTable />
+      <p className="text-gray-700 mt-6">Bem-vinda!</p>
+      {/* ... restante do conteúdo ... */}
     </div>
   );
 };
