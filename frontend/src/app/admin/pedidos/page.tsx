@@ -13,8 +13,15 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { toast, ToastContainer } from "react-toastify";
-import { getAllOrders } from "@/api/dashboard"; // Importe getAllOrders
+import { getAllOrders, updateOrderStatus } from "@/api/dashboard";
 import OrderDetailModal from "@/features/pedidos/components/OrderDetailModal";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Importe os componentes de select
 
 // Defina a interface para um Pedido (para a listagem)
 interface OrderListItem {
@@ -45,7 +52,7 @@ interface OrderDetail {
     produtoId: string;
     preco: number;
     quantidade: number;
-    name?: string; // Podemos tentar buscar o nome depois, se necessário
+    name?: string;
   }[];
 }
 
@@ -55,13 +62,25 @@ const OrdersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isOrderDetailModalOpen, setIsOrderDetailModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
+  const [statusUpdates, setStatusUpdates] = useState<{
+    [orderId: string]: "pendente" | "concluído" | "cancelado";
+  }>({});
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await getAllOrders();
-      setOrders(data.pedidos); // Acesse a propriedade 'pedidos'
+      setOrders(data.pedidos);
+      // Inicializa o estado de statusUpdates com o status atual dos pedidos
+      const initialStatusUpdates: {
+        [orderId: string]: "pendente" | "concluído" | "cancelado";
+      } = {};
+      data.pedidos.forEach((order) => {
+        initialStatusUpdates[order.id] = order.status;
+      });
+      setStatusUpdates(initialStatusUpdates);
     } catch (err: any) {
       setError("Erro ao carregar os pedidos.");
       console.error("Erro ao buscar pedidos:", err);
@@ -83,7 +102,7 @@ const OrdersPage = () => {
       status: order.status,
       total: order.total,
       enderecoEntrega: order.enderecoEntrega,
-      produtos: [], // Inicializamos como um array vazio aqui, pois não temos os detalhes completos ainda
+      produtos: [],
     });
     setIsOrderDetailModalOpen(true);
   };
@@ -91,6 +110,29 @@ const OrdersPage = () => {
   const closeOrderDetailModal = () => {
     setIsOrderDetailModalOpen(false);
     setSelectedOrder(null);
+  };
+
+  const handleStatusChange = (
+    orderId: string,
+    newStatus: "pendente" | "concluído" | "cancelado"
+  ) => {
+    setStatusUpdates((prev) => ({ ...prev, [orderId]: newStatus }));
+  };
+
+  const handleUpdateStatus = async (orderId: string) => {
+    setUpdatingStatus(true);
+    const newStatus = statusUpdates[orderId];
+    try {
+      await updateOrderStatus(orderId, newStatus); // Chama a função da API
+      toast.success(`Status do pedido ${orderId} atualizado para ${newStatus}`);
+      // Recarrega os pedidos para atualizar a tabela
+      await fetchOrders();
+    } catch (error: any) {
+      console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
+      toast.error(`Erro ao atualizar o status do pedido ${orderId}`);
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   return (
@@ -117,6 +159,9 @@ const OrdersPage = () => {
               <TableHead className="px-4 py-2 text-left">Valor Total</TableHead>
               <TableHead className="px-4 py-2 text-left">Status</TableHead>
               <TableHead className="px-4 py-2 text-left">Ações</TableHead>
+              <TableHead className="px-4 py-2 text-left">
+                Alterar Status
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -138,6 +183,36 @@ const OrdersPage = () => {
                 <TableCell className="px-4 py-2">
                   <Button size="sm" onClick={() => handleViewOrder(order)}>
                     Visualizar
+                  </Button>
+                </TableCell>
+                <TableCell className="px-4 py-2">
+                  <Select
+                    value={statusUpdates[order.id]}
+                    onValueChange={(value) =>
+                      handleStatusChange(
+                        order.id,
+                        value as "pendente" | "concluído" | "cancelado"
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selecione o status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="concluído">Concluído</SelectItem>
+                      <SelectItem value="cancelado">Cancelado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => handleUpdateStatus(order.id)}
+                    disabled={
+                      updatingStatus || statusUpdates[order.id] === order.status
+                    }
+                  >
+                    {updatingStatus ? "Atualizando..." : "Salvar Status"}
                   </Button>
                 </TableCell>
               </TableRow>

@@ -181,3 +181,26 @@ interface OrderDetail {
     name?: string; // Podemos tentar buscar o nome depois, se necessário
   }[];
 }
+
+// Função para atualizar o status do pedido
+export const updateOrderStatus = async (
+  orderId: string,
+  newStatus: "pendente" | "concluído" | "cancelado"
+): Promise<void> => {
+  const token = getToken();
+  try {
+    const response = await axios.patch(
+      // Ou axios.patch, dependendo da sua API
+      `${API_BASE_URL}/pedidos/${orderId}`, // Endpoint para atualizar o pedido
+      { status: newStatus }, // Envia o novo status no corpo da requisição
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    // Se a requisição for bem-sucedida, a API geralmente retorna um status 200 ou 204
+    console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
+  } catch (error: any) {
+    console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
+    throw error;
+  }
+};
