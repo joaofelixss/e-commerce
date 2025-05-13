@@ -54,6 +54,7 @@ model Cliente {
   nome      String
   telefone  String
   email     String?
+  endereco String?
   pedidos   Pedido[]
 }
 

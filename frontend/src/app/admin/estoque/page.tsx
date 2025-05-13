@@ -141,7 +141,7 @@ const StockPage = () => {
     <div className="container mx-auto py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center">
-          <Link href="/admin" className="hover:underline mr-4">
+          <Link href="/dashboard" className="hover:underline mr-4">
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Button>
