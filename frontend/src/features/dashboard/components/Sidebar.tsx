@@ -1,5 +1,5 @@
 // frontend/components/Sidebar.tsx
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,9 +8,11 @@ import {
   ListChecks,
   BarChart,
   Users,
-  Menu, // Importe o ícone de Menu novamente
+  Menu,
   Settings,
   ChartPie,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -19,11 +21,16 @@ import { useSidebarContext } from "@/contexts/SidebarContext";
 const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isOpen, toggleSidebar, closeSidebar } = useSidebarContext(); // Importamos toggleSidebar
+  const { isOpen, toggleSidebar, closeSidebar } = useSidebarContext();
+  const [isProductsSubMenuOpen, setIsProductsSubMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     router.push("/login");
+  };
+
+  const toggleProductsSubMenu = () => {
+    setIsProductsSubMenuOpen(!isProductsSubMenuOpen);
   };
 
   const menuItems = [
@@ -31,36 +38,43 @@ const Sidebar: React.FC = () => {
       href: "/dashboard",
       label: "Dashboard",
       icon: <BarChart className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
     {
       href: "/admin/produtos",
       label: "Produtos",
       icon: <Package className="h-4 w-4 mr-2" />,
+      subMenu: null, // Removi o subMenu de "Variáveis" daqui
     },
     {
       href: "/admin/pedidos",
       label: "Pedidos",
       icon: <ListChecks className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
     {
       href: "/admin/estoque",
       label: "Estoque",
       icon: <Package className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
     {
       href: "/admin/clientes",
       label: "Clientes",
       icon: <Users className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
     {
       href: "/admin/relatorios",
       label: "Relatórios",
       icon: <ChartPie className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
     {
-      href: "/admin/configuracoes",
+      href: "/admin/user/config",
       label: "Configurações",
       icon: <Settings className="h-4 w-4 mr-2" />,
+      subMenu: null,
     },
   ];
 
@@ -98,21 +112,52 @@ const Sidebar: React.FC = () => {
           </Link>
         )}
       </div>
-      <nav className="mt-2 space-y-3">
+      <nav className="mt-2 space-y-1">
         {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "block py-2 px-4 hover:bg-gray-100 transition-colors flex items-center",
-              pathname === item.href &&
-                "bg-blue-50 text-blue-600 font-semibold",
-              !isOpen && "justify-center"
-            )}
-          >
-            {item.icon}
-            {isOpen && <span>{item.label}</span>}
-          </Link>
+          <div key={item.href}>
+            <Link
+              href={item.href}
+              className={cn(
+                "w-full py-2 px-4 hover:bg-gray-100 transition-colors flex items-center",
+                pathname.startsWith(item.href) &&
+                  "bg-blue-50 text-blue-600 font-semibold",
+                !isOpen && "justify-center"
+              )}
+              onClick={() => (isOpen ? null : toggleSidebar())}
+            >
+              <div className="flex items-center">
+                {item.icon}
+                {isOpen && <span>{item.label}</span>}
+              </div>
+              {item.subMenu &&
+                isOpen &&
+                (isProductsSubMenuOpen ? (
+                  <ChevronUp className="h-4 w-4 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 ml-auto" />
+                ))}
+            </Link>
+            {isOpen &&
+              item.subMenu &&
+              pathname.startsWith("/admin/produtos") && (
+                <div className="ml-4 space-y-1">
+                  {/* O sub-menu de produtos não é mais fixo, podemos removê-lo ou adaptar se necessário */}
+                  {/* item.subMenu.map((subItem) => (
+                  <Link
+                    key={subItem.href}
+                    href={subItem.href}
+                    className={cn(
+                      "block py-2 px-6 hover:bg-gray-100 transition-colors",
+                      pathname === subItem.href &&
+                        "bg-blue-50 text-blue-600 font-semibold"
+                    )}
+                  >
+                    {subItem.label}
+                  </Link>
+                )) */}
+                </div>
+              )}
+          </div>
         ))}
       </nav>
       <div className="absolute bottom-4 left-4 w-full mt-8">

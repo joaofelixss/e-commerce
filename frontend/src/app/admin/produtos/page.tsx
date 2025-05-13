@@ -112,6 +112,10 @@ const ProductsPage = () => {
     setProductToDeleteId(null);
   };
 
+  const handleManageVariables = (productId: string) => {
+    router.push(`/admin/produtos/${productId}/variables`);
+  };
+
   return (
     <div className="container mx-auto py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
@@ -136,6 +140,10 @@ const ProductsPage = () => {
                 Imagem
               </TableHead>
               <TableHead className="px-4 py-2 text-left">Ações</TableHead>
+              <TableHead className="px-4 py-2 text-left">
+                Variações
+              </TableHead>{" "}
+              {/* Nova coluna */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -172,6 +180,16 @@ const ProductsPage = () => {
                       Excluir
                     </Button>
                   </div>
+                </TableCell>
+                <TableCell className="px-4 py-2">
+                  {" "}
+                  {/* Célula para o botão de variações */}
+                  <Button
+                    size="sm"
+                    onClick={() => handleManageVariables(product.id)}
+                  >
+                    Gerenciar Variações
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
