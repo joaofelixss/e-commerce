@@ -50,6 +50,32 @@ export class EstoqueService {
     }
   }
 
+  async getEstoqueDisponivelParaWhatsApp(): Promise<string> {
+    const produtos = await this.prisma.produto.findMany({
+      include: {
+        variacoes: {
+          where: { estoque: { gt: 0 } },
+        },
+      },
+      where: {
+        OR: [{ variacoes: { some: { estoque: { gt: 0 } } } }],
+      },
+    });
+
+    let tabela = '*Estoque Disponível*\n\n';
+    tabela += `*Produto* | *Variação* | *Quantidade*\n`;
+    tabela += `------- | -------- | ---------\n`;
+
+    for (const produto of produtos) {
+      for (const variacao of produto.variacoes) {
+        const variacaoTexto = `${variacao.cor || ''}${variacao.numero ? ` (Nº ${variacao.numero})` : ''}`;
+        tabela += `${produto.nome} | ${variacaoTexto} | ${variacao.estoque}\n`;
+      }
+    }
+
+    return tabela;
+  }
+
   @Cron(CronExpression.EVERY_HOUR) // Executa a cada hora
   async verificarNivelBaixoEstoque() {
     this.logger.log('Verificando níveis baixos de estoque...');

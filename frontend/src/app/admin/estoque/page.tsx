@@ -1,4 +1,3 @@
-// frontend/src/app/admin/estoque/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -17,8 +16,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { getStockLevels, updateStockLevel } from "@/api/estoque";
 import EditStockModal from "@/features/estoque/components/EditStockModal";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,

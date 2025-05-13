@@ -1,5 +1,13 @@
 // backend/src/estoque/estoque.controller.ts
-import { Controller, Get, Patch, Param, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  Body,
+  UseGuards,
+  Header,
+} from '@nestjs/common';
 import { EstoqueService } from './estoque.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Se você usa autenticação
 import { UpdateEstoqueDTO } from './dto/update-estoque.dto'; // Importe o DTO
@@ -52,5 +60,10 @@ export class EstoqueController {
       updateEstoqueDTO.quantidade,
       updateEstoqueDTO.nivelMinimo,
     );
+  }
+
+  @Get('disponivel/whatsapp')
+  async getEstoqueWhatsApp(): Promise<string> {
+    return this.estoqueService.getEstoqueDisponivelParaWhatsApp();
   }
 }

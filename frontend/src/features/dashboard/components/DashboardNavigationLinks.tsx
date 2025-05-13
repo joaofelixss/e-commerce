@@ -58,7 +58,7 @@ const DashboardNavigationLinks = () => {
         icon={<UsersIcon className="w-6 h-6" />}
       />
       <NavigationLinkCard
-        href="/admin/enviar-estoque"
+        href="/admin/estoque/disponivel"
         title="Enviar Estoque"
         icon={<SendIcon className="w-6 h-6" />}
       />

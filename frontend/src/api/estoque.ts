@@ -54,3 +54,49 @@ export const updateStockLevel = async (
     throw error;
   }
 };
+
+// api/estoque.ts
+export const gerarListaEstoque = async () => {
+  try {
+    const response = await fetch("/api/estoque/disponivel", {
+      // Rota para o PDF
+      method: "GET",
+      headers: {
+        "Content-Type": "application/pdf", // O backend deve estar enviando este header
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "estoque_disponivel.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Erro ao gerar e baixar o PDF:", error);
+    throw error;
+  }
+};
+
+// Nova função para buscar a lista de estoque para WhatsApp usando axios
+export const getEstoqueWhatsAppText = async (): Promise<string> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/estoque/disponivel/whatsapp`,
+      {
+        headers: { Authorization: `Bearer ${token}` }, // Se a rota do WhatsApp também requer autenticação
+        responseType: "text", // Esperamos uma resposta de texto
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Erro ao buscar a lista de estoque para WhatsApp:", error);
+    throw error;
+  }
+};
