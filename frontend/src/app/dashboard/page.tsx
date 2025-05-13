@@ -18,7 +18,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getSalesPerformance } from "@/api/dashboard";
-import Sidebar from "@/features/dashboard/components/Sidebar";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -28,11 +27,6 @@ const DashboardPage = () => {
     { name: string; Vendas: number }[]
   >([]);
   const [loadingSalesData, setLoadingSalesData] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -66,7 +60,6 @@ const DashboardPage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
       <h1 className="text-2xl font-semibold mb-6">Visão Geral</h1>
       <DashboardStatusCards />
 

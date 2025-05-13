@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,7 +48,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       setPreco("");
       onOpenChange(false); // Fechar o modal
       onProductAdded(); // Recarregar a lista de produtos
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao adicionar produto:", error);
       setSubmitError(
         "Erro ao adicionar o produto. Por favor, tente novamente."
