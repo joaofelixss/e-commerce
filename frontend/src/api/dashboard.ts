@@ -120,3 +120,64 @@ interface LowStockProduct {
   quantidade: number;
   nivelMinimo?: number;
 }
+
+export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(`${API_BASE_URL}/pedidos`, {
+      // Use o endpoint /pedidos
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // A resposta agora tem a propriedade 'pedidos'
+  } catch (error: any) {
+    console.error("Erro ao buscar todos os pedidos:", error);
+    throw error;
+  }
+};
+
+// Defina a interface para um Pedido (para a listagem)
+interface OrderListItem {
+  id: string;
+  cliente: { nome: string; email: string };
+  criadoEm: Date;
+  status: "pendente" | "concluído" | "cancelado";
+  total: number;
+  enderecoEntrega: {
+    cep: string;
+    rua: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    numero: string;
+    complemento: string | null;
+  } | null;
+  produtos: {
+    produtoId: string;
+    preco: number;
+    quantidade: number;
+  }[];
+}
+
+// Defina a interface para os detalhes do pedido (para o modal)
+interface OrderDetail {
+  id: string;
+  cliente: { nome: string; email: string };
+  criadoEm: Date;
+  status: string;
+  total: number;
+  enderecoEntrega: {
+    cep: string;
+    rua: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    numero: string;
+    complemento: string | null;
+  } | null;
+  produtos: {
+    produtoId: string;
+    preco: number;
+    quantidade: number;
+    name?: string; // Podemos tentar buscar o nome depois, se necessário
+  }[];
+}
