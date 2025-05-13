@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -7,6 +8,47 @@ export class EstoqueService {
   private readonly logger = new Logger(EstoqueService.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  async buscarDadosEstoqueParaAdmin() {
+    return this.prisma.produto.findMany({
+      include: {
+        variacoes: {
+          select: {
+            id: true,
+            cor: true,
+            numero: true,
+            estoque: true,
+            nivelMinimo: true,
+          },
+        },
+      },
+    });
+  }
+
+  async atualizarEstoque(
+    id: string,
+    quantidade?: number,
+    nivelMinimo?: number | null,
+  ): Promise<void> {
+    try {
+      await this.prisma.variacao.update({
+        where: { id },
+        data: {
+          estoque: quantidade,
+          nivelMinimo: nivelMinimo,
+        },
+      });
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundException(
+            `Variação com o ID "${id}" não encontrada.`,
+          );
+        }
+      }
+      throw error;
+    }
+  }
 
   @Cron(CronExpression.EVERY_HOUR) // Executa a cada hora
   async verificarNivelBaixoEstoque() {

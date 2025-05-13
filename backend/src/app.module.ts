@@ -16,6 +16,7 @@ import { NestFactory, NestApplication } from '@nestjs/core'; // Importando NestA
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UploadModule } from './upload/upload.module';
 import { VariacoesModule } from './modules/variacoes/variacoes.module';
+import { EstoqueModule } from './modules/estoque/estoque.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { VariacoesModule } from './modules/variacoes/variacoes.module';
     AuthModule,
     UploadModule,
     PedidosModule,
+    EstoqueModule,
     ClientesModule,
     CategoriasModule,
     ProdutosModule,
