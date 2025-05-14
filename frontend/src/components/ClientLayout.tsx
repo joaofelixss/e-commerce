@@ -3,7 +3,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import AdminLayout from "@/app/admin/admin-layout";
+import AdminLayoutWithProvider from "@/app/admin/layout";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
   return (
     <>
-      {isAdminRoute ? <AdminLayout>{children}</AdminLayout> : <>{children}</>}
+      {isAdminRoute ? <AdminLayoutWithProvider>{children}</AdminLayoutWithProvider> : <>{children}</>}
     </>
   );
 };

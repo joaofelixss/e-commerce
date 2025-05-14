@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/features/produtos/components/ProductCard";
 import { getProductById } from "../api/products"; // Importe a função da API
 
 interface Product {
