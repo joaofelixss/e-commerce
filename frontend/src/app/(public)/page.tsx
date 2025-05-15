@@ -3,28 +3,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
-import BannerCarousel from "@/components/BannerCarousel";
-import InfoCarousel from "@/components/InfoCarousel";
-import LinkSquares from "@/components/LinkSquares";
+import BannerCarousel from "@/components/Home/BannerCarousel";
+import InfoCarousel from "@/components/Home/InfoCarousel";
+import LinkSquares from "@/components/Home/LinkSquares";
 import { Toaster } from "sonner";
 import ProductCard from "@/features/produtos/components/ProductCard";
 import { Truck } from "lucide-react";
-import { getProductImageUrl } from "@/lib/utils";
+import { getProductImageUrl } from "@/features/produtos/lib/utils";
 import { getFeaturedProducts } from "@/api/products";
 import { motion } from "framer-motion";
-
-interface Product {
-  id: string;
-  nome: string;
-  preco: number;
-  imagemUrl: string;
-}
-
-interface Banner {
-  id: number;
-  img: string;
-  link: string;
-}
+import { Banner } from "@/types/banner";
+import { Product } from "@/features/produtos/types/product";
 
 const HomePage = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -48,7 +37,7 @@ const HomePage = () => {
         } else {
           setError("Erro: Dados de produtos inválidos.");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError("Erro ao carregar os destaques.");
         console.error("Erro ao buscar destaques:", err);
       } finally {

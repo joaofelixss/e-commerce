@@ -26,15 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface StockItem {
-  id: string;
-  nome: string;
-  quantidade: number;
-  nivelMinimo?: number | null;
-  variacao?: string;
-  variacaoId: string;
-}
+import { StockItem } from "@/features/admin/gerenciar-estoque/types/estoque";
 
 const StockPage = () => {
   const [stockItems, setStockItems] = useState<StockItem[]>([]);
@@ -97,7 +89,7 @@ const StockPage = () => {
         console.error("Erro: ID da variação não encontrado.");
         toast.error("Erro ao atualizar o estoque: ID da variação ausente.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar o estoque:", error);
       toast.error("Erro ao atualizar o estoque.");
     } finally {

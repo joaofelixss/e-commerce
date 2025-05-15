@@ -1,3 +1,4 @@
+// src/app/not-found.tsx
 "use client"
 
 import React from "react";

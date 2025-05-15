@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import AddVariableModal from "@/features/admin/gerenciar-variaveis/components/AddVariableModal";
 import EditVariableModal from "@/features/admin/gerenciar-variaveis/components/EditVariableModal";
-import { getVariablesByProductId, deleteVariable } from "@/api/products"; // Importe as funções da API
+import { getVariablesByProductId, deleteVariable } from "@/api/products";
 
 interface Variable {
   id: string;

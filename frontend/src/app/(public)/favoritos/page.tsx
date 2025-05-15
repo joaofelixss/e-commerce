@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { useFavoritesStore } from "@/store/favoritesStore";
+import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { useFetchProducts } from "@/features/produtos/hooks/useFetchProducts";
 import FavoriteItem from "@/features/favoritos/components/FavoriteItem";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";

@@ -2,16 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import ProductCard from "@/features/produtos/components/ProductCard";
-import { getProductById } from "../api/products"; // Importe a função da API
+import { getProductById } from "../../../api/products";
+import { Product } from "@/features/produtos/types/product";
 
-interface Product {
-  id: string;
-  nome: string;
-  preco: number;
-  imagemUrl: string;
-}
-
-const BarrocoCrocheSection: React.FC = () => {
+const RelatedProductsSection: React.FC = () => {
   const [barrocoProduct, setBarrocoProduct] = useState<Product | null>(null);
   const [crocheProduct, setCrocheProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +16,7 @@ const BarrocoCrocheSection: React.FC = () => {
       try {
         const data = await getProductById("2"); // Busca o produto com ID "2" (barroco)
         setBarrocoProduct(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Erro ao buscar produto barroco (ID 2):", err);
         setError("Erro ao carregar produto barroco.");
       }
@@ -32,7 +26,7 @@ const BarrocoCrocheSection: React.FC = () => {
       try {
         const data = await getProductById("3"); // Busca o produto com ID "3" (croche)
         setCrocheProduct(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Erro ao buscar produto crochê (ID 3):", err);
         setError(
           error
@@ -43,7 +37,6 @@ const BarrocoCrocheSection: React.FC = () => {
         setLoading(false);
       }
     };
-
     setLoading(true);
     setError(null);
     Promise.all([fetchBarroco(), fetchCroche()]);
@@ -62,7 +55,7 @@ const BarrocoCrocheSection: React.FC = () => {
   );
 
   if (!allProducts || allProducts.length === 0) {
-    return null; // Ou outra mensagem indicando que não há produtos com esses IDs
+    return null;
   }
 
   return (
@@ -79,4 +72,4 @@ const BarrocoCrocheSection: React.FC = () => {
   );
 };
 
-export default BarrocoCrocheSection;
+export default RelatedProductsSection;

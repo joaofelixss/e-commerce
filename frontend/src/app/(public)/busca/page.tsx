@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowLeft } from "lucide-react";
 import { useFetchProducts } from "@/features/produtos/hooks/useFetchProducts";
-import { Product } from "@/types/product";
+import { Product } from "@/features/produtos/types/product";
 
 const BuscaPage = () => {
   const searchParams = useSearchParams();

@@ -5,50 +5,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { getProductById } from "@/api/products";
-import { getProductImageUrl } from "@/lib/utils";
+import { getProductImageUrl } from "@/features/produtos/lib/utils";
 import { Heart, ShoppingCart } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { toast } from "sonner";
-import RelatedProductsSection from "@/components/BarrocoCrocheSection";
-import { useFavoritesStore } from "@/store/favoritesStore";
+import RelatedProductsSection from "@/features/produtos/components/RelatedProductsSection";
+import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import ProductVariantSelector from "@/features/produtos/components/ProductVariantSelector";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/features/produtos/store/cartStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-interface Variation {
-  id: string;
-  cor: string;
-  numero: number | null;
-  imagemUrl: string | null | undefined;
-  quantidade: number;
-  estoque: number;
-  nivelMinimo: number | null;
-  produtoId: string;
-}
-
-interface ProductDetails {
-  id: string;
-  nome: string;
-  preco: number;
-  estoque: number;
-  imagemUrl: string | null | undefined;
-  categoriaId: string;
-  criadoEm: string;
-  atualizadoEm: string;
-  variacoes: Variation[];
-}
-
-const toastConfig = {
-  position: "top-right",
-  autoClose: 2000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-} as const;
+import { cn } from "@/features/produtos/lib/utils";
+import { ProductDetails } from "@/features/admin/gerenciar-variaveis/types/variation";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -182,10 +150,7 @@ export default function ProductDetailPage() {
       toast.success(
         `${product.nome} (Cor: ${selectedColor || "N/A"}, Tamanho: ${
           selectedSize || "N/A"
-        }) adicionado ao carrinho!`,
-        {
-          ...toastConfig,
-        }
+        }) adicionado ao carrinho!`
       );
     } else {
       toast.error("Produto indisponível com a seleção feita.");
@@ -205,7 +170,7 @@ export default function ProductDetailPage() {
     if (product) {
       if (isFavorite) {
         removeItemFromFavorites(product.id);
-        toast.error("Removido dos favoritos!", { ...toastConfig });
+        toast.error("Removido dos favoritos!");
       } else {
         addItemToFavorites({
           id: product.id,
@@ -213,7 +178,7 @@ export default function ProductDetailPage() {
           imagemUrl: product.imagemUrl || "",
           slug: product.id,
         });
-        toast.success("Adicionado aos favoritos!", { ...toastConfig });
+        toast.success("Adicionado aos favoritos!");
       }
     }
   };
@@ -229,10 +194,7 @@ export default function ProductDetailPage() {
     } else if (!isNaN(value) && value > 0 && availableQuantity === undefined) {
       setQuantityToAdd(value);
     } else if (availableQuantity !== undefined && value > availableQuantity) {
-      toast.error(
-        `A quantidade máxima disponível é ${availableQuantity}.`,
-        toastConfig
-      );
+      toast.error(`A quantidade máxima disponível é ${availableQuantity}.`);
       setQuantityToAdd(availableQuantity);
     } else if (value < 1) {
       setQuantityToAdd(1); // Garante que a quantidade mínima seja 1

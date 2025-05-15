@@ -1,5 +1,5 @@
 // components/WhatsappMessageGenerator.tsx
-import { CartItem } from "@/store/cartStore";
+import { CartItem } from "@/features/produtos/store/cartStore";
 
 interface Props {
   name: string;

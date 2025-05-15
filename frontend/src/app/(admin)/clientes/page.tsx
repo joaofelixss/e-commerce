@@ -12,7 +12,6 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import { toast, ToastContainer } from "react-toastify";
 import {
   getClientes,
@@ -27,14 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-interface Cliente {
-  id: string;
-  nome: string;
-  email: string;
-  telefone?: string | null;
-  endereco?: string | null;
-}
+import { Cliente } from "@/features/admin/gerenciar-clientes/types/clients";
 
 const ClientesPage = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -52,7 +44,7 @@ const ClientesPage = () => {
     try {
       const data = await getClientes();
       setClientes(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar os clientes.");
       console.error("Erro ao buscar clientes:", err);
       toast.error("Erro ao carregar os clientes.");
@@ -99,7 +91,7 @@ const ClientesPage = () => {
         await deleteCliente(clienteToDelete);
         toast.success("Cliente excluído com sucesso!");
         await fetchClientes();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Erro ao excluir cliente:", error);
         toast.error("Erro ao excluir cliente.");
       } finally {

@@ -2,14 +2,14 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "@/store/cartStore";
-import { useFavoritesStore } from "@/store/favoritesStore";
+import { useCartStore } from "@/features/produtos/store/cartStore";
+import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FaWhatsapp } from "react-icons/fa";
-import { getProductImageUrl } from "@/lib/utils";
+import { getProductImageUrl } from "@/features/produtos/lib/utils";
 
 interface Product {
   id: string;

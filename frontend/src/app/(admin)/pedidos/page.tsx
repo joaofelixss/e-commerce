@@ -24,40 +24,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Importe os componentes de select
-
-// Defina a interface para um Pedido (para a listagem)
-interface OrderListItem {
-  id: string;
-  cliente: { nome: string; email: string };
-  criadoEm: Date;
-  status: "pendente" | "concluído" | "cancelado";
-  total: number;
-}
-
-// Defina a interface para os detalhes do pedido (para o modal)
-interface OrderDetail {
-  id: string;
-  cliente: { nome: string; email: string };
-  criadoEm: Date;
-  status: string;
-  total: number;
-  enderecoEntrega: {
-    cep: string;
-    rua: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    numero: string;
-    complemento: string | null;
-  } | null;
-  produtos: {
-    produtoId: string;
-    preco: number;
-    quantidade: number;
-    name?: string;
-  }[];
-}
+} from "@/components/ui/select";
+import { OrderDetail, OrderListItem } from "@/features/admin/gerenciar-pedidos/types/pedidos";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<OrderListItem[]>([]);
@@ -84,7 +52,7 @@ const OrdersPage = () => {
         initialStatusUpdates[order.id] = order.status;
       });
       setStatusUpdates(initialStatusUpdates);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar os pedidos.");
       console.error("Erro ao buscar pedidos:", err);
       toast.error("Erro ao carregar os pedidos.");
@@ -130,7 +98,7 @@ const OrdersPage = () => {
       toast.success(`Status do pedido ${orderId} atualizado para ${newStatus}`);
       // Recarrega os pedidos para atualizar a tabela
       await fetchOrders();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
       toast.error(`Erro ao atualizar o status do pedido ${orderId}`);
     } finally {

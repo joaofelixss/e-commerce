@@ -13,9 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify"; // Importe o toast do react-toastify
-import { updateVariable } from "@/api/products"; // Importe a função da API
-import "react-toastify/dist/ReactToastify.css"; // Garanta que os estilos estejam importados em algum lugar
+import { toast } from "sonner";
+import { updateVariable } from "@/api/products";
 
 interface EditVariableModalProps {
   open: boolean;

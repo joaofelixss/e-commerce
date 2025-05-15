@@ -4,7 +4,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useFavoritesStore } from "@/store/favoritesStore";
+import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { Product } from "@/features/produtos/hooks/useFetchProducts"; // Importe a interface Product
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";

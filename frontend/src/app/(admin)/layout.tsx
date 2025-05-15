@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import Sidebar from "@/features/admin/dashboard/components/Sidebar";
+import Sidebar from "@/features/admin/components/Sidebar";
 import { Menu } from "lucide-react";
 import { SidebarProvider, useSidebarContext } from "@/contexts/SidebarContext";
 import { Button } from "@/components/ui/button";

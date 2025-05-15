@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/features/produtos/store/cartStore";
 import {
   Trash2,
   Plus,
@@ -19,7 +19,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/features/produtos/lib/utils";
 
 interface CartItem {
   id: string;

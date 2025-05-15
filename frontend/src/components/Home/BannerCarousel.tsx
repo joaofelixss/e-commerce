@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils"; // Certifique-se de ter este arquivo de utilidades do Shadcn UI
 
 interface Banner {
   id: number;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,13 +8,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updatePassword, updateEmail } from "@/features/autenticacao/api/users"; // Importe as funções da API
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
 import { Loader2, ArrowLeft } from "lucide-react";
 
-interface FormError {
+/*interface FormError {
   message: string;
-  field?: string; // Opcional, para indicar qual campo tem o erro
-}
+  field?: string;
+}*/
 
 const SettingsPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -129,7 +128,7 @@ const SettingsPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log("Enviando imagem para o servidor:", profileImage);
       toast.success("Foto de perfil atualizada com sucesso!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar foto de perfil:", error);
       setImageError("Erro ao atualizar foto de perfil. Tente novamente.");
       toast.error("Erro ao atualizar foto de perfil. Tente novamente.");
@@ -292,14 +291,13 @@ const SettingsPage = () => {
                     Email Atual
                   </Label>
                   <Input
+                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300"
                     id="currentEmail"
                     type="email"
                     value={currentEmail}
                     onChange={(e) => setCurrentEmail(e.target.value)}
                     placeholder="Digite seu email atual"
-                    className="w-full"
                     readOnly // Torna o campo somente leitura
-                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300"
                   />
                 </div>
                 <div className="space-y-2">

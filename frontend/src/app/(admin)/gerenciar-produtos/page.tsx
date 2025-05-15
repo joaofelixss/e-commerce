@@ -23,16 +23,9 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { ArrowLeft } from "lucide-react"; // Importe o ícone de voltar
-import Link from "next/link"; // Importe o Link para navegação
-
-interface Product {
-  id: string;
-  nome: string;
-  preco: number;
-  imagemUrl?: string | null;
-  categoriaId: string;
-}
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Product } from "@/features/produtos/types/product";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -96,7 +89,7 @@ const ProductsPage = () => {
         await deleteProduct(productToDeleteId);
         toast.success("Produto excluído com sucesso!");
         fetchProducts();
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Erro ao deletar produto:", err);
         setError("Erro ao deletar o produto.");
         toast.error("Erro ao deletar o produto.");

@@ -1,7 +1,7 @@
 // frontend/src/hooks/useFetchProducts.ts
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Product } from "@/types/product"; // Importe a interface Product
+import { Product } from "@/features/produtos/types/product"; // Importe a interface Product
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";

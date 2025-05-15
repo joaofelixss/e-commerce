@@ -11,7 +11,7 @@ import {
   ChartPie,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "@/features/produtos/lib/utils";
 import { useSidebarContext } from "@/contexts/SidebarContext";
 
 const Sidebar: React.FC = () => {

@@ -7,8 +7,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Menu, ShoppingCart, Heart, Search, User } from "lucide-react";
-import { useCartStore } from "@/store/cartStore";
-import { useFavoritesStore } from "@/store/favoritesStore";
+import { useCartStore } from "@/features/produtos/store/cartStore";
+import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { useRouter } from "next/navigation";
 
 const Navbar = () => {

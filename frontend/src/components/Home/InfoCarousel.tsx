@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { Truck, Phone, CreditCard, ShieldCheck } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 
 interface InfoItem {
   id: number;
   icon?: React.ReactNode;
-  text: string;
+  text: string | React.JSX.Element;
 }
 
 const InfoCarousel = ({ items }: { items: InfoItem[] }) => {

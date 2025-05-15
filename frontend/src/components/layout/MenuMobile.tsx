@@ -12,7 +12,7 @@ import {
   ShoppingBasket,
   X,
 } from "lucide-react";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/features/produtos/store/cartStore";
 import { FaWhatsapp } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
