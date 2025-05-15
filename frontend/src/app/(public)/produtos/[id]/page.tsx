@@ -11,7 +11,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { toast } from "sonner";
 import RelatedProductsSection from "@/components/BarrocoCrocheSection";
 import { useFavoritesStore } from "@/store/favoritesStore";
-import ProductVariantSelector from "@/components/ProductVariantSelector";
+import ProductVariantSelector from "@/features/produtos/components/ProductVariantSelector";
 import { useCartStore } from "@/store/cartStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
 import { FaWhatsapp } from "react-icons/fa";
-import WhatsappMessageGenerator from "@/components/WhatsappMessageGenerator"; // Import o componente
+import WhatsappMessageGenerator from "@/features/checkout/components/WhatsappMessageGenerator"; // Import o componente
 
 interface ViaCepResponse {
   cep: string;

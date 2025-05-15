@@ -3,7 +3,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import AdminLayoutWithProvider from "@/app/admin/layout";
+import AdminLayoutWithProvider from "@/app/(admin)/layout";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
