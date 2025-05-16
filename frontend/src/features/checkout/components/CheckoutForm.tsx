@@ -19,6 +19,7 @@ import {
 import { toast, Toaster } from "sonner";
 import { FaWhatsapp } from "react-icons/fa";
 import WhatsappMessageGenerator from "@/features/checkout/components/WhatsappMessageGenerator"; // Import o componente
+import { createPedido } from "@/api/pedidos";
 
 interface ViaCepResponse {
   cep: string;
@@ -77,12 +78,6 @@ const CheckoutForm = () => {
     setNotes(event.target.value);
   };
 
-  const handleDesejaEntregaChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setDesejaEntrega(event.target.checked);
-  };
-
   const handleCepChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCep(event.target.value);
     setCepError("");
@@ -102,18 +97,6 @@ const CheckoutForm = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setComplemento(event.target.value);
-  };
-
-  const handleBairroChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBairro(event.target.value);
-  };
-
-  const handleCidadeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCidade(event.target.value);
-  };
-
-  const handleUfChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUf(event.target.value);
   };
 
   const handleFormaPagamentoChange = (value: "dinheiro" | "pix" | "cartao") => {
@@ -200,7 +183,7 @@ const CheckoutForm = () => {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (validateForm()) {
@@ -223,24 +206,73 @@ const CheckoutForm = () => {
         cidade,
         uf,
         frete,
-        cartItems: cartItems as CartItem[], // Garante que o tipo está correto
+        cartItems: cartItems as CartItem[],
         totalComFrete,
         formaPagamento,
         notes,
       });
 
-      window.open(
-        `https://wa.me/5569992784621?text=${whatsappMessage}`,
-        "_blank"
-      );
+      const pedidoData: CreatePedidoData = {
+        produtos: cartItems.map((item) => ({
+          produtoId: item.id,
+          quantidade: item.quantity,
+        })),
+        total: totalComFrete,
+        enderecoEntrega: desejaEntrega
+          ? {
+              cep: cep,
+              rua: endereco,
+              bairro: bairro,
+              cidade: cidade,
+              estado: uf,
+              numero: numero,
+              complemento: complemento || null,
+            }
+          : null,
+        cliente: {
+          nome: name,
+          telefone: phone,
+          endereco: null, // Você já está enviando o endereço de entrega separadamente
+          numero: null,
+          complemento: null,
+          bairro: null,
+          cidade: null,
+          uf: null,
+          cep: null,
+        },
+        observacoes: notes || null,
+        formaPagamento: formaPagamento,
+      };
 
-      clearCart();
-      router.push("/pedido-enviado");
+      setSubmitting(true);
+      try {
+        const response = await createPedido(pedidoData);
+        if (response.success) {
+          toast.success("Pedido enviado com sucesso!");
+          window.open(
+            `https://wa.me/5569992784621?text=${whatsappMessage}`,
+            "_blank"
+          );
+          clearCart();
+          router.push("/pedido-enviado");
+        } else {
+          toast.error(
+            response.message || "Ocorreu um erro ao processar o pedido."
+          );
+        }
+      } catch (error: any) {
+        console.error("Erro ao enviar pedido para a API:", error);
+        toast.error("Ocorreu um erro ao enviar o pedido.");
+      } finally {
+        setSubmitting(false);
+      }
     } else {
       toast.error("Por favor, corrija os erros no formulário.");
     }
   };
 
+  // Adicione um estado para controlar o envio do formulário
+  const [submitting, setSubmitting] = useState(false);
   return (
     <Card className="max-w-md mx-auto mt-8 mb-15 p-4">
       <Toaster richColors />

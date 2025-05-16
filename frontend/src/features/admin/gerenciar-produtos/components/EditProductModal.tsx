@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { updateProduct } from "@/api/products";
+import { updateProduct } from "../api/puducts";
 import { Product } from "@/features/produtos/types/product";
 import { toast } from "react-toastify";
 

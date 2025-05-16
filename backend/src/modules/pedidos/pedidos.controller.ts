@@ -6,18 +6,17 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Query, // Importe Query
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+//import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CheckoutPedidoDto } from './dto/checkout-pedido.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('pedidos')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 @Controller('pedidos')
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}

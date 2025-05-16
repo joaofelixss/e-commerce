@@ -5,34 +5,10 @@ import React from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-// Defina a interface para os detalhes do pedido
-interface OrderDetail {
-  id: string;
-  cliente: { nome: string; email: string };
-  criadoEm: Date;
-  status: string;
-  total: number;
-  enderecoEntrega: {
-    cep: string;
-    rua: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    numero: string;
-    complemento: string | null;
-  } | null;
-  produtos: {
-    produtoId: string;
-    preco: number;
-    quantidade: number;
-    name?: string; // Podemos tentar buscar o nome depois, se necessário
-  }[];
-}
+import { OrderDetail } from "../types/pedidos";
 
 interface OrderDetailModalProps {
   open: boolean;

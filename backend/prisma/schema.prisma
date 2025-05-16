@@ -46,6 +46,8 @@ model Pedido {
   criadoEm        DateTime  @default(now())
   clienteId       String?
   cliente         Cliente?  @relation(fields: [clienteId], references: [id])
+  formaPagamento  String?
+  observacoes     String?
   enderecoEntrega Json?
 }
 
@@ -54,7 +56,13 @@ model Cliente {
   nome      String
   telefone  String
   email     String?
-  endereco String?
+  endereco  String?
+  numero    String?
+  bairro    String?
+  cidade    String?
+  uf        String?
+  cep       String?
+  complemento String?
   pedidos   Pedido[]
 }
 

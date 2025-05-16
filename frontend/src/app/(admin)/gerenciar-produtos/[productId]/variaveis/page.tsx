@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import AddVariableModal from "@/features/admin/gerenciar-variaveis/components/AddVariableModal";
 import EditVariableModal from "@/features/admin/gerenciar-variaveis/components/EditVariableModal";
-import { getVariablesByProductId, deleteVariable } from "@/api/products";
+import { getVariablesByProductId, deleteVariable } from "@/features/admin/gerenciar-variaveis/api/variation";
 
 interface Variable {
   id: string;
@@ -130,7 +130,7 @@ const ProductVariablesPage = () => {
   return (
     <div className="container mx-auto py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/admin/produtos" className="hover:underline">
+        <Link href="/gerenciar-produtos" className="hover:underline">
           <Button variant="outline" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Produtos
           </Button>

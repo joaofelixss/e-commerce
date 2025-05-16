@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getAllProducts, deleteProduct } from "@/api/products";
+import { getAllProducts } from "@/api/products";
+import { deleteProduct } from "@/features/admin/gerenciar-produtos/api/puducts";
 import {
   Table,
   TableHeader,
@@ -106,7 +107,7 @@ const ProductsPage = () => {
   };
 
   const handleManageVariables = (productId: string) => {
-    router.push(`/admin/produtos/${productId}/variables`);
+    router.push(`/gerenciar-produtos/${productId}/variaveis`);
   };
 
   return (
@@ -175,8 +176,6 @@ const ProductsPage = () => {
                   </div>
                 </TableCell>
                 <TableCell className="px-4 py-2">
-                  {" "}
-                  {/* Célula para o botão de variações */}
                   <Button
                     size="sm"
                     onClick={() => handleManageVariables(product.id)}

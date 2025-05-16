@@ -26,7 +26,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         >
           <Menu className="h-6 w-6" />
         </Button>
-        <main className="py-4 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+        <main className="">
           {children}
         </main>
       </div>

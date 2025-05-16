@@ -7,108 +7,126 @@ import {
   IsNumber,
   Min,
   IsOptional,
-  IsUUID, // Importe IsUUID
+  IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CheckoutItemDto {
   @IsNotEmpty()
   @IsString()
-  produtoId: string;
+  produtoId!: string;
 
   @IsOptional()
   @IsUUID(undefined, {
     message: 'O ID da variação no item do pedido deve ser um UUID válido.',
   })
-  variacaoId?: string; // Adicionamos o variacaoId como opcional
+  variacaoId?: string;
 
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
-  quantidade: number;
-
-  constructor(produtoId: string, quantidade: number, variacaoId?: string) {
-    // Adicionando um construtor
-    this.produtoId = produtoId;
-    this.quantidade = quantidade;
-    this.variacaoId = variacaoId;
-  }
+  quantidade!: number;
 }
 
 export class EnderecoEntregaDto {
   @IsNotEmpty()
   @IsString()
-  rua: string;
+  cep!: string;
 
   @IsNotEmpty()
   @IsString()
-  numero: string;
+  rua!: string;
 
-  @IsOptional() // Importante: adicionei a importação no topo
+  @IsNotEmpty()
+  @IsString()
+  bairro!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  cidade!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  estado!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  numero!: string;
+
+  @IsOptional()
+  @IsString()
+  complemento?: string;
+}
+
+export class ClienteInfoDto {
+  @IsNotEmpty()
+  @IsString()
+  nome!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  telefone!: string;
+
+  @IsOptional()
+  @IsString()
+  endereco?: string;
+
+  @IsOptional()
+  @IsString()
+  numero?: string;
+
+  @IsOptional()
   @IsString()
   complemento?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  bairro: string;
+  bairro?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  cidade: string;
+  cidade?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  estado: string;
+  uf?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  cep: string;
+  cep?: string;
 
-  constructor(
-    rua: string,
-    numero: string,
-    bairro: string,
-    cidade: string,
-    estado: string,
-    cep: string,
-    complemento?: string,
-  ) {
-    // Adicionando um construtor
-    this.rua = rua;
-    this.numero = numero;
-    this.bairro = bairro;
-    this.cidade = cidade;
-    this.estado = estado;
-    this.cep = cep;
-    this.complemento = complemento;
-  }
+  @IsOptional()
+  @IsString()
+  email?: string; // Adicione esta linha
 }
 
 export class CheckoutPedidoDto {
-  @IsNotEmpty()
-  @IsString()
-  clienteId: string;
-
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => CheckoutItemDto)
-  itens: CheckoutItemDto[];
+  produtos!: CheckoutItemDto[]; // Renomeado para 'produtos' para corresponder ao frontend
+
+  @IsNotEmpty()
+  @IsNumber()
+  total!: number; // Adicionado o total do pedido
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => EnderecoEntregaDto)
+  enderecoEntrega?: EnderecoEntregaDto | null; // Tornando opcional e permitindo null
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => EnderecoEntregaDto)
-  enderecoEntrega: EnderecoEntregaDto;
+  @Type(() => ClienteInfoDto)
+  cliente!: ClienteInfoDto; // Adicionado o objeto 'cliente'
 
-  constructor(
-    clienteId: string,
-    itens: CheckoutItemDto[],
-    enderecoEntrega: EnderecoEntregaDto,
-  ) {
-    // Adicionando um construtor
-    this.clienteId = clienteId;
-    this.itens = itens;
-    this.enderecoEntrega = enderecoEntrega;
-  }
+  @IsOptional()
+  @IsString()
+  observacoes?: string | null; // Adicionadas as observações
+
+  @IsNotEmpty()
+  @IsString()
+  formaPagamento!: 'dinheiro' | 'pix' | 'cartao'; // Adicionada a forma de pagamento
 }

@@ -9,8 +9,7 @@ import {
 } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Importe os estilos do react-toastify
+import { toast, Toaster } from "sonner";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -44,18 +43,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-gray-100 py-12 text-gray-600 pb-5">
-      <ToastContainer
-        position="bottom-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      <Toaster />
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         {/* Seção de Contato */}
         <div>

@@ -11,12 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { addProduct } from "@/api/products"; // Importe a função addProduct
+import { addProduct } from "../api/puducts"; 
 
 interface AddProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onProductAdded: () => void; // Callback para recarregar a lista de produtos
+  onProductAdded: () => void; 
 }
 
 const AddProductModal: React.FC<AddProductModalProps> = ({

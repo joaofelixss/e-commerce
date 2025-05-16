@@ -14,12 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updateVariable } from "@/api/products";
+import { updateVariable } from "../api/variation";
 
 interface EditVariableModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  productId: string;
+  productId: string | string[];
   variable: {
     id: string;
     cor?: string;

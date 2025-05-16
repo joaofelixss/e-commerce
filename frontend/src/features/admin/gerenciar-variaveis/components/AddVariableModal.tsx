@@ -14,13 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify"; // Importe o toast do react-toastify
-import { addVariable } from "@/api/products"; // Importe a função da API
+import { addVariable } from "../api/variation"; // Importe a função da API
 import "react-toastify/dist/ReactToastify.css"; // Importe os estilos do react-toastify
 
 interface AddVariableModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  productId: string;
+  productId: string | string[];
   onVariableAdded: () => void; // Função para notificar a página pai que uma variável foi adicionada
 }
 

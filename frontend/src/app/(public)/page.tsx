@@ -10,7 +10,7 @@ import { Toaster } from "sonner";
 import ProductCard from "@/features/produtos/components/ProductCard";
 import { Truck } from "lucide-react";
 import { getProductImageUrl } from "@/features/produtos/lib/utils";
-import { getFeaturedProducts } from "@/api/products";
+import { getAllProducts } from "@/api/products";
 import { motion } from "framer-motion";
 import { Banner } from "@/types/banner";
 import { Product } from "@/features/produtos/types/product";
@@ -27,7 +27,7 @@ const HomePage = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getFeaturedProducts();
+        const data = await getAllProducts();
         if (data && data.data) {
           const produtosComUrlCompleta = data.data.map((produto: Product) => ({
             ...produto,
