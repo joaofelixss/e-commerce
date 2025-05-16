@@ -12,12 +12,13 @@ import { ProdutosModule } from './modules/produtos/produtos.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EstoqueService } from './modules/estoque/estoque.service';
-import { NestFactory, NestApplication } from '@nestjs/core'; // Importando NestApplication
+import { NestFactory, NestApplication } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UploadModule } from './upload/upload.module';
 import { VariacoesModule } from './modules/variacoes/variacoes.module';
 import { EstoqueModule } from './modules/estoque/estoque.module';
 import { AdminProfileModule } from './modules/admin/admin-profile.module';
+import { VendasModule } from './modules/vendas/vendas.module';
 
 @Module({
   imports: [
@@ -35,10 +36,11 @@ import { AdminProfileModule } from './modules/admin/admin-profile.module';
     ScheduleModule.forRoot(),
     VariacoesModule,
     AdminProfileModule,
+    VendasModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, EstoqueService],
-  exports: [PrismaService], // <--- Certifique-se de ter esta linha
+  exports: [PrismaService],
 })
 export class AppModule {}
 

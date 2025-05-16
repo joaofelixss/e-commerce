@@ -18,6 +18,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { getSalesPerformance } from "@/features/admin/dashboard/api/dashboard";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -66,9 +69,16 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
         <Card>
           <CardContent className="h-80">
-            <h2 className="text-lg font-semibold mb-4">
-              Desempenho de Vendas (Última Semana)
-            </h2>
+            <div className="flex justify-between">
+              <h2 className="text-lg font-semibold mb-4">
+                Desempenho de Vendas (Última Semana)
+              </h2>
+              <Link href="/vendas" className="hover:underline">
+                <Button variant="outline" size="sm">
+                  <ArrowRight className="mr-2 h-4 w-4" /> ir para Vendas
+                </Button>
+              </Link>
+            </div>
             {loadingSalesData ? (
               <div>Carregando dados do gráfico...</div>
             ) : (
@@ -92,7 +102,14 @@ const DashboardPage = () => {
 
         <Card>
           <CardContent>
-            <h2 className="text-lg font-semibold mb-4">Pedidos Recentes</h2>
+            <div className="flex justify-between">
+              <h2 className="text-lg font-semibold mb-4">Pedidos Recentes</h2>
+              <Link href="/pedidos" className="hover:underline">
+                <Button variant="outline" size="sm">
+                  <ArrowRight className="mr-2 h-4 w-4" /> ir para pedidos
+                </Button>
+              </Link>
+            </div>
             <RecentOrdersTable />
           </CardContent>
         </Card>

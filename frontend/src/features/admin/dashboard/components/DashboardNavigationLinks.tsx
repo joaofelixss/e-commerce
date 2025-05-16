@@ -7,6 +7,7 @@ import {
   UsersIcon,
   BarChartIcon,
   SendIcon,
+  TagIcon,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card"; // Reutilizando o Card
 
@@ -41,6 +42,11 @@ const DashboardNavigationLinks = () => {
         href="/gerenciar-produtos"
         title="Gerenciar Produtos"
         icon={<PackageIcon className="w-6 h-6" />}
+      />
+      <NavigationLinkCard
+        href="/categorias"
+        title="Gerenciar Categorias"
+        icon={<TagIcon className="w-6 h-6" />}
       />
       <NavigationLinkCard
         href="/pedidos"

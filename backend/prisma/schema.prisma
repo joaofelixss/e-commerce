@@ -17,6 +17,7 @@ model Produto {
   criadoEm      DateTime    @default(now())
   atualizadoEm  DateTime    @updatedAt
   variacoes     Variacao[] // Relação com a Model Variacao
+  itensVenda    ItemVenda[]  @relation("ProdutoToItemVenda")
 }
 
 model Variacao {
@@ -29,6 +30,8 @@ model Variacao {
   nivelMinimo Int?      // Nível mínimo de estoque para esta variação
   produto     Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
   produtoId   String
+  custoCompra Float?
+  itensVenda  ItemVenda[]
   @@unique([produtoId, cor, numero]) // Garante que não haja variações duplicadas para o mesmo produto
 }
 
@@ -49,6 +52,7 @@ model Pedido {
   formaPagamento  String?
   observacoes     String?
   enderecoEntrega Json?
+  venda           Venda?    @relation("PedidoToVenda") // Removidos fields, references e onDelete
 }
 
 model Cliente {
@@ -64,6 +68,7 @@ model Cliente {
   cep       String?
   complemento String?
   pedidos   Pedido[]
+  vendas    Venda[]   @relation("ClienteToVenda")
 }
 
 model Usuario {
@@ -72,4 +77,36 @@ model Usuario {
   senha String
   nome  String
   role  String // "admin", "colaborador"
+}
+
+model Venda {
+  id             String       @id @default(uuid())
+  pedidoId       String?      @unique
+  pedido         Pedido?      @relation("PedidoToVenda", fields: [pedidoId], references: [id], onDelete: Cascade) // Mantidos aqui
+  clienteId      String?
+  cliente        Cliente?     @relation("ClienteToVenda", fields: [clienteId], references: [id])
+  dataVenda      DateTime     @default(now())
+  totalVenda     Float
+  formaPagamento String?
+  itensVenda     ItemVenda[]
+  lucroBruto     Float?
+  custoTotal     Float?
+  observacoes    String?
+  criadoEm       DateTime     @default(now())
+  atualizadoEm   DateTime     @updatedAt
+}
+
+model ItemVenda {
+  id            String   @id @default(uuid())
+  vendaId       String
+  venda         Venda    @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  produtoId     String
+  produto       Produto  @relation("ProdutoToItemVenda", fields: [produtoId], references: [id])
+  variacaoId    String?
+  variacao      Variacao? @relation(fields: [variacaoId], references: [id])
+  quantidade    Int
+  precoVenda    Float
+  custoUnitario Float?
+  subtotal      Float
+  lucroItem     Float?
 }

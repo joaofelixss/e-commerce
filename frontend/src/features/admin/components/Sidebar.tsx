@@ -7,11 +7,8 @@ import {
   PackageIcon,
   ListChecksIcon,
   UsersIcon,
-  SettingsIcon,
   ChartPieIcon,
-  SettingsIcon as SettingsIconSecondary,
-  HelpCircleIcon,
-  SearchIcon,
+  SettingsIcon,
   type LucideIcon,
   TagIcon,
   ShoppingCartIcon,
@@ -30,7 +27,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NavMain } from "./nav-main";
 import { NavDocuments } from "./nav-documents";
-import { NavSecondary } from "./nav-secondary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -39,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
   open?: boolean;
@@ -63,12 +60,6 @@ interface NavDocumentItem {
     title: string;
     url: string;
   }[];
-}
-
-interface NavSecondaryItem {
-  title: string;
-  url: string;
-  icon: LucideIcon;
 }
 
 const mockUser = {
@@ -123,11 +114,19 @@ const menuItems: NavItem[] = [
     title: "Vendas",
     url: "/vendas",
     icon: ShoppingCartIcon,
+    submenu: [
+      { title: "Vendas Realizadas", url: "/Vendas" },
+      { title: "Adicionar Venda", url: "/Vendas" },
+    ],
   },
   {
     title: "Categorias",
     url: "/categorias",
     icon: TagIcon,
+    submenu: [
+      { title: "Todas as Categorias", url: "/categorias" },
+      { title: "Adicionar Categoria", url: "/categorias/adicionar" },
+    ],
   },
   {
     title: "Configurações",
@@ -147,12 +146,6 @@ const documentsData: NavDocumentItem[] = [
       { title: "Relatório de Estoque", url: "/relatorios/estoque" },
     ],
   },
-];
-
-const secondaryItems: NavSecondaryItem[] = [
-  { title: "Settings", url: "#", icon: SettingsIconSecondary },
-  { title: "Get Help", url: "#", icon: HelpCircleIcon },
-  { title: "Search", url: "#", icon: SearchIcon },
 ];
 
 const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
@@ -178,7 +171,12 @@ const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
         <SidebarMenu>
           <SidebarMenuItem>
             <Link href="/" className="flex items-center font-bold text-lg">
-              {!isMobile() && isCollapsed ? "LM" : "Loja Mae Admin"}
+              <Image
+                src="/images/logo.png"
+                alt="Logo da Loja"
+                width={120}
+                height={30}
+              />
             </Link>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -187,8 +185,6 @@ const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
         <ScrollArea className="h-full">
           <NavMain items={menuItems} />
           <NavDocuments items={documentsData} />{" "}
-          {/* Use o componente NavDocuments */}
-          <NavSecondary items={secondaryItems} className="mt-auto" />
         </ScrollArea>
       </SidebarContent>
       <SidebarFooter>

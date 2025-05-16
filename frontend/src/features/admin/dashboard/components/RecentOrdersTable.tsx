@@ -59,7 +59,8 @@ const RecentOrdersTable = () => {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-semibold mb-4">Pedidos Recentes</h2>
+        <h2 className="text-xl font-semibold mb-4">Pedidos Recentes</h2>
+       
       <div className="rounded-md border">
         <Table>
           <TableHeader>
