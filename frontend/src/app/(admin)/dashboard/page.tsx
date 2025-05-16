@@ -105,7 +105,6 @@ const DashboardPage = () => {
 
       <div className="mt-8">
         <LowStockAlerts />{" "}
-        {/* Renderiza o componente de alertas de estoque baixo */}
       </div>
     </div>
   );

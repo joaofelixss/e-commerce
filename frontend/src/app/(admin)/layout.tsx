@@ -2,42 +2,47 @@
 "use client";
 
 import React from "react";
-import Sidebar from "@/features/admin/components/Sidebar";
-import { Menu } from "lucide-react";
-import { SidebarProvider, useSidebarContext } from "@/contexts/SidebarContext";
-import { Button } from "@/components/ui/button";
+import SidebarComponent from "@/features/admin/components/Sidebar";
 import { Toaster } from "sonner";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SiteHeader } from "@/features/admin/components/site-header";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const { toggleSidebar } = useSidebarContext();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const isMobile = () => window.innerWidth < 768;
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <div className="">
-      <Sidebar />
-
-      <div className="flex-1 transition-margin duration-300 ml-0">
-        <Button
-          onClick={toggleSidebar}
-          variant="ghost"
-          className="fixed top-2 left-1 z-50 in-hover"
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-        <main className="">{children}</main>
+    <SidebarProvider>
+      <div className="h-screen overflow-hidden flex w-full">
+        {!isMobile() && !isSidebarOpen ? null : (
+          <SidebarComponent
+            variant="inset"
+            open={isSidebarOpen}
+            onOpenChange={setIsSidebarOpen}
+            className="w-64 shrink-0 border-r transition-transform duration-300"
+          />
+        )}
+        <SidebarInset className="flex-1 overflow-y-auto">
+          <SiteHeader
+            onOpenSidebar={toggleSidebar}
+            isSidebarOpen={isSidebarOpen}
+          />
+          <div className="p-4 md:p-6">
+            <main className="flex-1">{children}</main>
+          </div>
+        </SidebarInset>
+        <Toaster richColors />
       </div>
-      <Toaster richColors />
-    </div>
+    </SidebarProvider>
   );
 };
 
-const AdminLayoutWithProvider: React.FC<AdminLayoutProps> = ({ children }) => (
-  <SidebarProvider>
-    <AdminLayout>{children}</AdminLayout>
-  </SidebarProvider>
-);
-
-export default AdminLayoutWithProvider;
+export default AdminLayout;

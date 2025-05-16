@@ -1,136 +1,232 @@
 // frontend/components/Sidebar.tsx
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  LogOut,
-  Package,
-  ListChecks,
-  BarChart,
-  Users,
-  Settings,
-  ChartPie,
-} from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { useSidebarContext } from "@/contexts/SidebarContext";
+"use client";
 
-const Sidebar: React.FC = () => {
+import * as React from "react";
+import {
+  BarChartIcon,
+  PackageIcon,
+  ListChecksIcon,
+  UsersIcon,
+  SettingsIcon,
+  ChartPieIcon,
+  SettingsIcon as SettingsIconSecondary,
+  HelpCircleIcon,
+  SearchIcon,
+  type LucideIcon,
+  TagIcon,
+  ShoppingCartIcon,
+  UserRound,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { NavMain } from "./nav-main";
+import { NavDocuments } from "./nav-documents";
+import { NavSecondary } from "./nav-secondary";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  submenu?: {
+    title: string;
+    url: string;
+  }[];
+}
+
+interface NavDocumentItem {
+  name: string;
+  url: string;
+  icon: LucideIcon;
+  submenu?: {
+    title: string;
+    url: string;
+  }[];
+}
+
+interface NavSecondaryItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+}
+
+const mockUser = {
+  name: "Usuário Admin",
+  imageUrl: "",
+  email: "admin@example.com",
+};
+
+const menuItems: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: BarChartIcon,
+  },
+  {
+    title: "Produtos",
+    url: "/gerenciar-produtos",
+    icon: PackageIcon,
+    submenu: [
+      { title: "Todos os Produtos", url: "/gerenciar-produtos" },
+      { title: "Adicionar Produto", url: "/gerenciar-produtos/adicionar" },
+    ],
+  },
+  {
+    title: "Pedidos",
+    url: "/pedidos",
+    icon: ListChecksIcon,
+    submenu: [
+      { title: "Todos os Pedidos", url: "/pedidos" },
+      { title: "Novo Pedido", url: "/pedidos/novo" },
+    ],
+  },
+  {
+    title: "Estoque",
+    url: "/estoque",
+    icon: PackageIcon,
+    submenu: [
+      { title: "Visão Geral", url: "/estoque" },
+      { title: "Inventário", url: "/estoque/inventario" },
+    ],
+  },
+  {
+    title: "Clientes",
+    url: "/clientes",
+    icon: UsersIcon,
+    submenu: [
+      { title: "Lista de Clientes", url: "/clientes" },
+      { title: "Adicionar Cliente", url: "/clientes/adicionar" },
+    ],
+  },
+  {
+    title: "Vendas",
+    url: "/vendas",
+    icon: ShoppingCartIcon,
+  },
+  {
+    title: "Categorias",
+    url: "/categorias",
+    icon: TagIcon,
+  },
+  {
+    title: "Configurações",
+    url: "/user/config",
+    icon: SettingsIcon,
+  },
+];
+
+const documentsData: NavDocumentItem[] = [
+  {
+    name: "Relatórios",
+    url: "/relatorios",
+    icon: ChartPieIcon,
+    submenu: [
+      { title: "Visão Geral", url: "/relatorios" },
+      { title: "Relatório de Vendas", url: "/relatorios/vendas" },
+      { title: "Relatório de Estoque", url: "/relatorios/estoque" },
+    ],
+  },
+];
+
+const secondaryItems: NavSecondaryItem[] = [
+  { title: "Settings", url: "#", icon: SettingsIconSecondary },
+  { title: "Get Help", url: "#", icon: HelpCircleIcon },
+  { title: "Search", url: "#", icon: SearchIcon },
+];
+
+const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isOpen, toggleSidebar } = useSidebarContext();
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const isMobile = () => window.innerWidth < 768;
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     router.push("/login");
   };
 
-  const menuItems = [
-    {
-      href: "/dashboard",
-      label: "Dashboard",
-      icon: <BarChart className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/gerenciar-produtos",
-      label: "Produtos",
-      icon: <Package className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/pedidos",
-      label: "Pedidos",
-      icon: <ListChecks className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/estoque",
-      label: "Estoque",
-      icon: <Package className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/clientes",
-      label: "Clientes",
-      icon: <Users className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/relatorios",
-      label: "Relatórios",
-      icon: <ChartPie className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-    {
-      href: "/user/config",
-      label: "Configurações",
-      icon: <Settings className="h-4 w-4 mr-2" />,
-      subMenu: null,
-    },
-  ];
-
-  const collapsedWidth = "3rem";
-  const sidebarWidth = "16rem";
-
   return (
-    <aside
-      className={cn(
-        "fixed top-0 left-0 h-full bg-white shadow-md z-50 transition-transform duration-300 border-r border-gray-200",
-        isOpen
-          ? "translate-x-0"
-          : `translate-x-[calc(-100% + ${collapsedWidth})]`
-      )}
-      style={{ width: isOpen ? sidebarWidth : collapsedWidth }}
+    <Sidebar
+      open={open}
+      onOpenChange={onOpenChange}
+      collapsible={!isMobile()}
+      collapsed={!isMobile() && isCollapsed}
+      className="bg-secondary/95 backdrop-blur-sm shadow-md border-r border-border"
     >
-      <div className="p-5 flex items-center mb-3">
-        {isOpen && (
-          <Link href="/" className="font-bold text-lg mt-7">
-            Loja Mae Admin
-          </Link>
-        )}
-      </div>
-      {!isOpen && (
-        <Link href="/" className="font-bold p-2">
-          LM
-        </Link>
-      )}
-      <nav className="mt-2 space-y-1">
-        {menuItems.map((item) => (
-          <div key={item.href}>
-            <Link
-              href={item.href}
-              className={cn(
-                "w-full py-2 px-4 hover:bg-gray-100 transition-colors flex items-center",
-                pathname.startsWith(item.href) &&
-                  "bg-blue-50 text-blue-600 font-semibold",
-                !isOpen && "justify-center"
-              )}
-              onClick={() => (isOpen ? null : toggleSidebar())}
-            >
-              <div className="flex items-center">
-                {item.icon}
-                {isOpen && <span>{item.label}</span>}
-              </div>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Link href="/" className="flex items-center font-bold text-lg">
+              {!isMobile() && isCollapsed ? "LM" : "Loja Mae Admin"}
             </Link>
-          </div>
-        ))}
-      </nav>
-      <div className="absolute bottom-4 left-4 w-full mt-8">
-        <Button
-          onClick={handleLogout}
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "w-full flex items-center justify-start",
-            isOpen ? "space-x-2" : "justify-center"
-          )}
-        >
-          <LogOut className="h-4 w-4" />
-          {isOpen && <span className="text-sm">Sair</span>}
-        </Button>
-      </div>
-    </aside>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <ScrollArea className="h-full">
+          <NavMain items={menuItems} />
+          <NavDocuments items={documentsData} />{" "}
+          {/* Use o componente NavDocuments */}
+          <NavSecondary items={secondaryItems} className="mt-auto" />
+        </ScrollArea>
+      </SidebarContent>
+      <SidebarFooter>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar className="cursor-pointer bg-white">
+              {mockUser.imageUrl ? (
+                <AvatarImage src={mockUser.imageUrl} alt={mockUser.name} />
+              ) : (
+                <AvatarFallback>
+                  <UserRound className="h-5 w-5" />
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-4 py-2">
+              <div className="font-medium">{mockUser.name}</div>
+              <div className="text-muted-foreground text-sm">
+                {mockUser.email}
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/user/profile">Perfil</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/user/settings">Configurações</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              Sair
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
-export default Sidebar;
+export default SidebarComponent;
