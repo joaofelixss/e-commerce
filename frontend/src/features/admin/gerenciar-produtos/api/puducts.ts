@@ -1,4 +1,4 @@
-// src/api/products.ts
+// src/features/admin/gerenciar-produtos/api/products.ts
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000";
