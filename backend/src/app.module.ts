@@ -17,6 +17,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UploadModule } from './upload/upload.module';
 import { VariacoesModule } from './modules/variacoes/variacoes.module';
 import { EstoqueModule } from './modules/estoque/estoque.module';
+import { AdminProfileModule } from './modules/admin/admin-profile.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { EstoqueModule } from './modules/estoque/estoque.module';
     DashboardModule,
     ScheduleModule.forRoot(),
     VariacoesModule,
+    AdminProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, EstoqueService],

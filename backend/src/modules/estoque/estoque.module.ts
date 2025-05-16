@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { EstoqueController } from './estoque.controller';
 import { EstoqueService } from './estoque.service';
 import { AuthModule } from '../auth/auth.module';
-import { PrismaService } from 'src/prisma/prisma.service'; // Certifique-se do caminho correto para o seu PrismaService
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, UsersModule],
   controllers: [EstoqueController],
-  providers: [EstoqueService, PrismaService], // Inclua o PrismaService se o seu Service o utiliza diretamente
+  providers: [EstoqueService, PrismaService],
 })
 export class EstoqueModule {}

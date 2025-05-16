@@ -56,7 +56,11 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const payload = { sub: usuario.id, username: usuario.nome };
+    const payload = {
+      sub: usuario.id,
+      username: usuario.nome,
+      role: usuario.role,
+    };
     this.logger.log(`Payload do JWT: ${JSON.stringify(payload)}`);
     try {
       const accessToken = await this.jwtService.signAsync(payload);

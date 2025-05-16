@@ -1,19 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { updatePassword, updateEmail } from "@/features/autenticacao/api/users"; // Importe as funções da API
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, ArrowLeft } from "lucide-react";
+import {
+  updatePassword,
+  updateEmail,
+  getAdminProfile,
+} from "@/features/autenticacao/api/users"; // Importe as funções da API
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Loader2, ArrowLeft, User } from "lucide-react"; // Importe o ícone User do Lucide
+import { cn } from "@/lib/utils"; // Supondo que você tenha uma função cn para classes condicionais
+import Link from "next/link";
 
-/*interface FormError {
-  message: string;
-  field?: string;
-}*/
+const LOCAL_STORAGE_PROFILE_IMAGE_KEY = "adminProfileImage";
 
 const SettingsPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -25,10 +28,13 @@ const SettingsPage = () => {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null); // URL da imagem
+  const [profileImage, setProfileImage] = useState<string | null>(
+    localStorage.getItem(LOCAL_STORAGE_PROFILE_IMAGE_KEY) || null
+  );
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [isRemovingImage, setIsRemovingImage] = useState(false);
 
   // Função para lidar com a atualização da senha
   const handleUpdatePassword = async () => {
@@ -63,6 +69,21 @@ const SettingsPage = () => {
       setIsPasswordLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await getAdminProfile(); // Use a nova função
+        setCurrentEmail(profileData.email);
+        setUserName(profileData.nome);
+      } catch (error: unknown) {
+        console.error("Erro ao buscar perfil:", error);
+        toast.error("Erro ao buscar informações do perfil.");
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // Função para lidar com a atualização do email
   const handleUpdateEmail = async () => {
@@ -124,10 +145,11 @@ const SettingsPage = () => {
 
     setIsImageLoading(true);
     try {
-      // Simulando o envio da imagem para o servidor (substitua com sua lógica real)
+      // SIMULAÇÃO DO ENVIO PARA O SERVIDOR (SUBSTITUA PELA SUA LÓGICA REAL)
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log("Enviando imagem para o servidor:", profileImage);
       toast.success("Foto de perfil atualizada com sucesso!");
+      localStorage.setItem(LOCAL_STORAGE_PROFILE_IMAGE_KEY, profileImage); // SALVA NO LOCAL STORAGE
     } catch (error: unknown) {
       console.error("Erro ao atualizar foto de perfil:", error);
       setImageError("Erro ao atualizar foto de perfil. Tente novamente.");
@@ -137,16 +159,30 @@ const SettingsPage = () => {
     }
   };
 
-  const handleGoBack = () => {
-    window.history.back(); // Simples navegação para a página anterior
+  const handleRemoveProfileImage = async () => {
+    setIsRemovingImage(true);
+    try {
+      // SIMULAÇÃO DA REMOÇÃO DA IMAGEM DO SERVIDOR (SUBSTITUA PELA SUA LÓGICA REAL)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      localStorage.removeItem(LOCAL_STORAGE_PROFILE_IMAGE_KEY);
+      setProfileImage(null);
+      toast.success("Foto de perfil removida com sucesso!");
+    } catch (error: unknown) {
+      console.error("Erro ao remover foto de perfil:", error);
+      toast.error("Erro ao remover foto de perfil. Tente novamente.");
+    } finally {
+      setIsRemovingImage(false);
+    }
   };
 
   return (
     <div className="container mx-auto py-8 sm:px-6 lg:px-8">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" onClick={handleGoBack} className="px-2">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
-        </Button>
+        <Link href="/dashboard" className="hover:underline">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+          </Button>
+        </Link>
         <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
           Configurações da Conta
         </h1>
@@ -161,14 +197,21 @@ const SettingsPage = () => {
             </h2>
             <div className="flex flex-col items-center gap-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage
-                  src={profileImage || undefined}
-                  alt={`Foto de Perfil de ${userName}`}
-                />
-                <AvatarFallback>
-                  {/* Se não tiver imagem, mostra as iniciais do nome do usuário.  Você agora tem o nome do usuário. */}
-                  {userName ? userName.substring(0, 2).toUpperCase() : "PF"}
-                </AvatarFallback>
+                {profileImage ? (
+                  <AvatarImage
+                    src={profileImage}
+                    alt={`Foto de Perfil de ${userName}`}
+                  />
+                ) : (
+                  <div
+                    className={cn(
+                      "flex h-full w-full items-center justify-center rounded-full bg-background",
+                      "dark:bg-muted-foreground/10"
+                    )}
+                  >
+                    <User />
+                  </div>
+                )}
               </Avatar>
               <Input
                 id="profileImage"
@@ -188,12 +231,29 @@ const SettingsPage = () => {
                 {isImageLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Salvando...
+                    Salvar Foto
                   </>
                 ) : (
                   "Salvar Foto"
                 )}
               </Button>
+              {profileImage && (
+                <Button
+                  onClick={handleRemoveProfileImage}
+                  disabled={isRemovingImage}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  {isRemovingImage ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Removendo...
+                    </>
+                  ) : (
+                    "Remover Foto"
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -266,7 +326,7 @@ const SettingsPage = () => {
                   {isPasswordLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Salvando...
+                      Salvar Nova Senha
                     </>
                   ) : (
                     "Salvar Nova Senha"
@@ -295,8 +355,6 @@ const SettingsPage = () => {
                     id="currentEmail"
                     type="email"
                     value={currentEmail}
-                    onChange={(e) => setCurrentEmail(e.target.value)}
-                    placeholder="Digite seu email atual"
                     readOnly // Torna o campo somente leitura
                   />
                 </div>
@@ -327,7 +385,7 @@ const SettingsPage = () => {
                   {isEmailLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Salvando...
+                      Salvar Novo Email
                     </>
                   ) : (
                     "Salvar Novo Email"

@@ -9,7 +9,7 @@ import LinkSquares from "@/components/Home/LinkSquares";
 import { Toaster } from "sonner";
 import ProductCard from "@/features/produtos/components/ProductCard";
 import { Truck } from "lucide-react";
-import { getProductImageUrl } from "@/features/produtos/lib/utils";
+import { getProductImageUrl } from "@/lib/utils";
 import { getAllProducts } from "@/api/products";
 import { motion } from "framer-motion";
 import { Banner } from "@/types/banner";

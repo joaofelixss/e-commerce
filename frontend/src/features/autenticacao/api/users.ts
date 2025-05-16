@@ -1,7 +1,7 @@
-// frontend/src/api/users.ts
+// /src/features/admin/autenticacao/api/users.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000"; // Certifique-se de que esta URL esteja correta
+const API_BASE_URL = "http://localhost:3000";
 
 const getToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -19,18 +19,27 @@ interface UpdateEmailData {
   newEmail: string;
 }
 
+interface AdminProfileResponse {
+  id: string;
+  nome: string;
+  email: string;
+  role: string;
+  // Adicione outras propriedades que o backend retorna
+}
+
 export const updatePassword = async (
   data: UpdatePasswordData
 ): Promise<void> => {
   const token = getToken();
   try {
-    await axios.patch(`${API_BASE_URL}/users/password`, data, {
+    await axios.patch(`${API_BASE_URL}/admin/profile/change-password`, data, {
+      // Endpoint corrigido
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     console.log("Senha atualizada com sucesso!");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao atualizar senha:", error);
     throw error;
   }
@@ -39,14 +48,33 @@ export const updatePassword = async (
 export const updateEmail = async (data: UpdateEmailData): Promise<void> => {
   const token = getToken();
   try {
-    await axios.patch(`${API_BASE_URL}/users/email`, data, {
+    await axios.patch(`${API_BASE_URL}/admin/profile/change-email`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     console.log("Email atualizado com sucesso!");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao atualizar email:", error);
+    throw error;
+  }
+};
+
+// NOVA FUNÇÃO PARA BUSCAR O PERFIL
+export const getAdminProfile = async (): Promise<AdminProfileResponse> => {
+  const token = getToken();
+  try {
+    const response = await axios.get<AdminProfileResponse>(
+      `${API_BASE_URL}/admin/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao buscar perfil:", error);
     throw error;
   }
 };

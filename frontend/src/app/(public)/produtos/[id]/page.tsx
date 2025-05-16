@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { getProductById } from "@/api/products";
-import { getProductImageUrl } from "@/features/produtos/lib/utils";
+import { getProductImageUrl } from "@/lib/utils";
 import { Heart, ShoppingCart } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import ProductVariantSelector from "@/features/produtos/components/ProductVarian
 import { useCartStore } from "@/features/produtos/store/cartStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/features/produtos/lib/utils";
+import { cn } from "@/lib/utils";
 import { ProductDetails } from "@/features/admin/gerenciar-variaveis/types/variation";
 
 export default function ProductDetailPage() {

@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FaWhatsapp } from "react-icons/fa";
-import { getProductImageUrl } from "@/features/produtos/lib/utils";
+import { getProductImageUrl } from "@/lib/utils";
 
 interface Product {
   id: string;

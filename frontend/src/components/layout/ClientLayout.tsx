@@ -4,6 +4,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import AdminLayoutWithProvider from "@/app/(admin)/layout";
+import AdminNavbar from "@/features/admin/components/AdminNavBar";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,12 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
   return (
     <>
-      {isAdminRoute ? <AdminLayoutWithProvider>{children}</AdminLayoutWithProvider> : <>{children}</>}
+      <AdminNavbar />
+      {isAdminRoute ? (
+        <AdminLayoutWithProvider>{children}</AdminLayoutWithProvider>
+      ) : (
+        <>{children}</>
+      )}
     </>
   );
 };

@@ -8,10 +8,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IncomingHttpHeaders } from 'http';
+import { UsersService } from '../users/users.service'; // Importe o UsersService
 
 interface JwtPayload {
-  sub: number;
+  sub: string; // Alterado para string, pois o ID é UUID
   username: string;
+  role?: string; // Adicionado o role ao payload
   iat?: number;
   exp?: number;
 }
@@ -24,9 +26,11 @@ interface RequestWithHeaders extends Request {
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   private readonly logger = new Logger(JwtAuthGuard.name);
-  private readonly adminUsername = 'sonia'; // Defina o nome de usuário do administrador AQUI!
 
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private usersService: UsersService, // Injete o UsersService
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestWithHeaders>();
@@ -49,15 +53,15 @@ export class JwtAuthGuard implements CanActivate {
       this.logger.debug(`Token Verified. Payload: ${JSON.stringify(payload)}`); // LOG DO PAYLOAD VERIFICADO
       request.user = payload;
 
-      // Verificar se o nome de usuário do payload corresponde ao nome de usuário do administrador
-      if (payload.username === this.adminUsername) {
-        return true; // Acesso permitido para o administrador
+      // Verificar se a role do usuário no payload é "admin"
+      if (payload.role === 'admin') {
+        return true; // Acesso permitido para administradores
       } else {
         this.logger.warn(
-          `Acesso negado. Usuário '${payload.username}' não é o administrador.`,
+          `Acesso negado. Usuário '${payload.username}' não tem a role de administrador. Role: ${payload.role}`,
         );
         throw new UnauthorizedException(
-          'Acesso negado. Não é o administrador.',
+          'Acesso negado. Requer role de administrador.',
         );
       }
     } catch (error) {

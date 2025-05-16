@@ -16,8 +16,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { toggleSidebar } = useSidebarContext();
 
   return (
-    <div className="flex">
+    <div className="">
       <Sidebar />
+
       <div className="flex-1 transition-margin duration-300 ml-0">
         <Button
           onClick={toggleSidebar}
@@ -26,9 +27,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         >
           <Menu className="h-6 w-6" />
         </Button>
-        <main className="">
-          {children}
-        </main>
+        <main className="">{children}</main>
       </div>
       <Toaster richColors />
     </div>
