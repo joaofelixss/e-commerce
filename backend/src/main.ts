@@ -5,10 +5,7 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
     app.enableCors({
-      origin: [
-        'https://e-commerce-two-beta-36.vercel.app', // SEM a barra no final
-        'http://localhost:3002', // Se você precisa de acesso local
-      ],
+      origin: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
