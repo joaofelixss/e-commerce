@@ -67,15 +67,13 @@ const AddManualSaleModal: React.FC<AddManualSaleModalProps> = ({
       setDataVenda(undefined);
       onOpenChange(false);
       onManualSaleAdded();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao adicionar venda manual:", error);
       toast.error(
-        error?.response?.data?.message ||
-          "Erro ao adicionar a venda manual. Por favor, tente novamente."
+        "Erro ao adicionar a venda manual. Por favor, tente novamente."
       );
       setSubmitError(
-        error?.response?.data?.message ||
-          "Erro ao adicionar a venda manual. Por favor, tente novamente."
+        "Erro ao adicionar a venda manual. Por favor, tente novamente."
       );
     } finally {
       setLoadingSubmit(false);

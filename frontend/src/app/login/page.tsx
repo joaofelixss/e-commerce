@@ -59,8 +59,8 @@ const LoginPage = () => {
         // Falha no login
         toast.error(data.message || "Credenciais inválidas."); // Exibe a mensagem de erro da API
       }
-    } catch (error: any) {
-      toast.error(error.message || "Ocorreu um erro ao tentar fazer login.");
+    } catch (error: unknown) {
+      toast.error("Ocorreu um erro ao tentar fazer login.");
     } finally {
       setIsLoading(false);
     }

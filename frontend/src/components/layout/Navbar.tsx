@@ -10,6 +10,7 @@ import { Menu, ShoppingCart, Heart, Search, User } from "lucide-react";
 import { useCartStore } from "@/features/produtos/store/cartStore";
 import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,10 +48,13 @@ const Navbar = () => {
 
         {/* Logo Centralizada */}
         <Link href="/">
-          <img
+          <Image
             className="w-full h-auto object-contain max-h-[50px]"
             src="/images/logo.png"
-            alt=""
+            alt="Aviamentos"
+            width={150}
+            height={50}
+            priority
           />
         </Link>
 

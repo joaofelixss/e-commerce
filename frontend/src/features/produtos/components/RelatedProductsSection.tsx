@@ -29,9 +29,12 @@ const RelatedProductsSection: React.FC = () => {
       } catch (err: unknown) {
         console.error("Erro ao buscar produto crochê (ID 3):", err);
         setError(
-          error
-            ? `${error}\nErro ao carregar produto crochê.`
-            : "Erro ao carregar produto crochê."
+          (
+            prevError // Usando a forma funcional de setError
+          ) =>
+            prevError
+              ? `${prevError}\nErro ao carregar produto crochê.`
+              : "Erro ao carregar produto crochê."
         );
       } finally {
         setLoading(false);
@@ -40,7 +43,7 @@ const RelatedProductsSection: React.FC = () => {
     setLoading(true);
     setError(null);
     Promise.all([fetchBarroco(), fetchCroche()]);
-  }, []);
+  }, []); // Array de dependências vazio, pois não dependemos de nenhuma variável externa que possa mudar
 
   if (loading) {
     return <p>Carregando produtos barroco e crochê...</p>;

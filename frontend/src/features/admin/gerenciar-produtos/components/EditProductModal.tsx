@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 interface EditProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  product: Product | null;
+  product: Product | null | undefined; // Produto a ser editado
   onProductUpdated: () => void; // Callback para recarregar a lista
 }
 
@@ -42,12 +42,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       setNome(product.nome);
       setPreco(String(product.preco));
       setImagemUrl(product.imagemUrl || "");
-      setCategoriaId(product.categoriaId);
     } else {
       setNome("");
       setPreco("");
       setImagemUrl("");
-      setCategoriaId("");
     }
   }, [product]);
 
@@ -68,7 +66,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         toast.success("Produto atualizado com sucesso!");
         onProductUpdated();
         onOpenChange(false);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Erro ao atualizar produto:", error);
         setError("Erro ao atualizar o produto. Por favor, tente novamente.");
         toast.error("Erro ao atualizar o produto.");

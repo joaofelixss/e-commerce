@@ -39,10 +39,8 @@ const ForgotPasswordPage = () => {
 
       toast.success(`Um link de recuperação foi enviado para ${email}.`);
       setEmail(""); // Limpa o campo de e-mail após o envio
-    } catch (error: any) {
-      toast.error(
-        error.message || "Ocorreu um erro ao solicitar a recuperação."
-      );
+    } catch (error: unknown) {
+      toast.error("Ocorreu um erro ao solicitar a recuperação.");
     } finally {
       setIsLoading(false);
     }

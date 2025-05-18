@@ -51,11 +51,7 @@ const SalesChart: React.FC<SalesChartProps> = ({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="h-80">
-        {" "}
-        {/* Defina uma altura para o gráfico */}
         <ResponsiveContainer width="100%" height="80%">
-          {" "}
-          {/* Ajuste a altura dentro do CardContent */}
           <LineChart data={dataForChart}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis dataKey="date" stroke="#718096" tickLine={false} />

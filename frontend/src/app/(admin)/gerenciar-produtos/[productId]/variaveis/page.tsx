@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Table,
@@ -24,7 +24,10 @@ import {
 } from "@/components/ui/dialog";
 import AddVariableModal from "@/features/admin/gerenciar-variaveis/components/AddVariableModal";
 import EditVariableModal from "@/features/admin/gerenciar-variaveis/components/EditVariableModal";
-import { getVariablesByProductId, deleteVariable } from "@/features/admin/gerenciar-variaveis/api/variation";
+import {
+  getVariablesByProductId,
+  deleteVariable,
+} from "@/features/admin/gerenciar-variaveis/api/variation";
 
 interface Variable {
   id: string;
@@ -34,13 +37,16 @@ interface Variable {
   quantidade?: number;
   estoque?: number;
   nivelMinimo?: number;
-  produtoId: string;
+  produtoId: string; // Garante que produtoId seja sempre string aqui
   // Adicione outras propriedades conforme a resposta da sua API
 }
 
 const ProductVariablesPage = () => {
-  const { productId } = useParams();
+  const { productId: productIdParam } = useParams();
   const router = useRouter();
+  const productId = Array.isArray(productIdParam)
+    ? productIdParam[0]
+    : productIdParam;
   const [variables, setVariables] = useState<Variable[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +58,7 @@ const ProductVariablesPage = () => {
     null
   );
 
-  const fetchVariables = async () => {
+  const fetchVariables = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -60,20 +66,20 @@ const ProductVariablesPage = () => {
         const response = await getVariablesByProductId(productId);
         setVariables(response); // A API agora retorna diretamente o array de variáveis
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar as variáveis do produto.");
       console.error("Erro ao buscar variáveis:", err);
       toast.error("Erro ao carregar as variáveis do produto.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId]);
 
   useEffect(() => {
     if (productId) {
       fetchVariables();
     }
-  }, [productId]);
+  }, [fetchVariables, productId]);
 
   const handleVariableAdded = () => {
     fetchVariables();
@@ -107,7 +113,7 @@ const ProductVariablesPage = () => {
         await deleteVariable(productId, variableToDeleteId);
         toast.success("Variação excluída com sucesso!");
         fetchVariables();
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Erro ao deletar variação:", err);
         setError("Erro ao deletar a variação.");
         toast.error("Erro ao deletar a variação.");
@@ -192,13 +198,7 @@ const ProductVariablesPage = () => {
                   <TableCell className="px-4 py-2">{variable.cor}</TableCell>
                   <TableCell className="px-4 py-2">{variable.numero}</TableCell>
                   <TableCell className="px-4 py-2">
-                    {variable.imagemUrl && (
-                      <img
-                        src={variable.imagemUrl}
-                        alt={`Imagem da variação ${variable.id}`}
-                        className="h-8 w-8 rounded-sm object-cover"
-                      />
-                    )}
+                    {variable.imagemUrl}
                   </TableCell>
                   <TableCell className="px-4 py-2">
                     {variable.quantidade}

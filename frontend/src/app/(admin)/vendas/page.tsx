@@ -29,6 +29,16 @@ import {
   Order,
 } from "@/features/admin/vendas/api/sales";
 
+interface SaleDataCombined {
+  id: string;
+  tipo: "Pedido" | "Venda Manual";
+  data: string;
+  clienteNome?: string;
+  valorTotal: number;
+  statusPagamento?: string;
+  originalData: Order | Venda; // Mantém os dados originais para acesso a outras propriedades
+}
+
 const SalesPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [sales, setSales] = useState<Venda[]>([]);
@@ -48,23 +58,8 @@ const SalesPage = () => {
     setErrorOrders(null);
     try {
       const response = await getOrders();
-      if (
-        response &&
-        typeof response === "object" &&
-        Array.isArray(response.pedidos)
-      ) {
-        setOrders(response.pedidos); // Acesse o array dentro da propriedade 'pedidos'
-      } else {
-        console.error(
-          "Erro: Formato de resposta de pedidos inesperado:",
-          response
-        );
-        setErrorOrders(
-          "Erro ao carregar os pedidos: formato de dados inválido."
-        );
-        toast.error("Erro ao carregar os pedidos: formato de dados inválido.");
-      }
-    } catch (err: any) {
+      setOrders(response);
+    } catch (err: unknown) {
       setErrorOrders("Erro ao carregar os pedidos.");
       console.error("Erro ao buscar pedidos:", err);
       toast.error("Erro ao carregar os pedidos.");
@@ -79,17 +74,8 @@ const SalesPage = () => {
     try {
       const response = await getSales();
       console.log("Dados de vendas recebidos:", response); // Adicione este log
-      if (Array.isArray(response)) {
-        setSales(response);
-      } else {
-        console.error(
-          "Erro: Formato de resposta de vendas inválido:",
-          response
-        );
-        setErrorSales("Erro ao carregar as vendas: formato de dados inválido.");
-        toast.error("Erro ao carregar as vendas: formato de dados inválido.");
-      }
-    } catch (err: any) {
+      setSales(response);
+    } catch (err: unknown) {
       setErrorSales("Erro ao carregar as vendas.");
       console.error("Erro ao buscar vendas:", err);
       toast.error("Erro ao carregar as vendas.");
@@ -121,19 +107,27 @@ const SalesPage = () => {
   };
 
   // Combine orders e sales para exibir na tabela
-  const allSalesData = [
+  const allSalesData: SaleDataCombined[] = [
     ...(Array.isArray(orders)
       ? orders.map((order) => ({
-          ...order,
-          tipo: "Pedido",
+          id: order.id,
+          tipo: "Pedido" as const,
           data: order.criadoEm,
+          clienteNome: order.cliente?.nome,
+          valorTotal: order.total,
+          statusPagamento: order.status,
+          originalData: order,
         }))
       : []),
     ...(Array.isArray(sales)
       ? sales.map((sale) => ({
-          ...sale,
-          tipo: "Venda Manual",
+          id: sale.id,
+          tipo: "Venda Manual" as const,
           data: sale.dataVenda,
+          clienteNome: sale.cliente?.nome,
+          valorTotal: sale.totalVenda,
+          statusPagamento: sale.formaPagamento,
+          originalData: sale,
         }))
       : []),
   ];
@@ -196,17 +190,15 @@ const SalesPage = () => {
                 <TableCell className="px-4 py-2 font-medium">
                   {sale.id}
                 </TableCell>
+                <TableCell className="px-4 py-2">{sale.data}</TableCell>
                 <TableCell className="px-4 py-2">
-                  {sale.data || sale.dataPedido || sale.dataVenda}
+                  {sale.clienteNome || "-"}
                 </TableCell>
                 <TableCell className="px-4 py-2">
-                  {sale.cliente?.nome || sale.cliente}
+                  R$ {sale.valorTotal?.toFixed(2)}
                 </TableCell>
                 <TableCell className="px-4 py-2">
-                  R$ {sale.total?.toFixed(2) || sale.valorTotal?.toFixed(2)}
-                </TableCell>
-                <TableCell className="px-4 py-2">
-                  {sale.status || sale.formaPagamento}
+                  {sale.statusPagamento || "-"}
                 </TableCell>
                 <TableCell className="px-4 py-2">
                   <Button

@@ -11,7 +11,7 @@ interface ProdutoVenda {
   custoUnitario?: number;
 }
 
-interface Venda {
+export interface Venda {
   id: string;
   pedidoId?: string;
   clienteId?: string;
@@ -36,22 +36,23 @@ interface ItemVenda {
   custoUnitario?: number;
   subtotal: number;
   lucroItem?: number;
-  produto: Produto; // Se você quiser incluir os dados do produto
-  variacao?: Variacao; // Se você quiser incluir os dados da variação
+  produto: Produto; 
+  variacao?: Variacao; 
 }
 
-interface Order {
+export interface Order {
   id: string;
-  produtos: any; // Ajuste o tipo conforme a estrutura real
+  produtos: unknown; 
   status: string;
   total: number;
   criadoEm: string;
+  pedidos?: string;
   clienteId?: string;
   cliente?: Cliente;
   formaPagamento?: string;
   observacoes?: string;
-  enderecoEntrega?: any;
-  venda?: Venda; // Se você quiser incluir os dados da venda associada
+  enderecoEntrega?: unknown;
+  venda?: Venda; 
 }
 
 interface Cliente {
@@ -59,7 +60,6 @@ interface Cliente {
   nome: string;
   telefone: string;
   email?: string;
-  // ... outras propriedades do cliente
 }
 
 interface Produto {
@@ -97,7 +97,7 @@ export const getOrders = async (): Promise<Order[]> => {
   try {
     const response = await axios.get<Order[]>(`${API_BASE_URL}/pedidos`); // Ajuste o endpoint se necessário
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar pedidos:", error);
     throw error;
   }
@@ -107,7 +107,7 @@ export const getSales = async (): Promise<Venda[]> => {
   try {
     const response = await axios.get<Venda[]>(`${API_BASE_URL}/vendas`); // Endpoint para buscar todas as vendas
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar vendas:", error);
     throw error;
   }
@@ -122,7 +122,7 @@ export const addManualSale = async (
       payload
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao adicionar venda manual:", error);
     throw error;
   }

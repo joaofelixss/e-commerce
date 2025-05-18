@@ -69,11 +69,10 @@ const AddVariableModal: React.FC<AddVariableModalProps> = ({
       } else {
         toast.error("Não foi possível adicionar a variação.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao adicionar variação:", error);
       toast.error(
-        error?.response?.data?.message ||
-          "Erro ao adicionar a variação. Verifique os dados e tente novamente."
+        "Erro ao adicionar a variação. Verifique os dados e tente novamente."
       );
     } finally {
       setLoading(false);

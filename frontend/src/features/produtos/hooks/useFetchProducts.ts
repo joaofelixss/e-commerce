@@ -21,10 +21,10 @@ export const useFetchProducts = (categoria?: string) => {
           url += `?categoria=${categoria}`;
         }
         const response = await axios.get(url);
-        setProducts(response.data.data); 
+        setProducts(response.data.data);
         setLoading(false);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar produtos.");
+      } catch (err: unknown) {
+        setError("Erro ao buscar produtos.");
         setLoading(false);
         console.error(
           `Erro ao buscar produtos${categoria ? ` de ${categoria}` : ""}:`,

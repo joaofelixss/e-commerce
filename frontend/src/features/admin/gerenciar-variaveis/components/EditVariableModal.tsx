@@ -28,7 +28,7 @@ interface EditVariableModalProps {
     quantidade?: number;
     estoque?: number;
     nivelMinimo?: number;
-    produtoId: string;
+    produtoId: string | string[];
   } | null;
   onVariableUpdated: () => void; // Função para notificar a página pai que a variável foi atualizada
 }
@@ -99,11 +99,10 @@ const EditVariableModal: React.FC<EditVariableModalProps> = ({
       } else {
         toast.error("Não foi possível atualizar a variação.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar variação:", error);
       toast.error(
-        error?.response?.data?.message ||
-          "Erro ao atualizar a variação. Verifique os dados e tente novamente."
+        "Erro ao atualizar a variação. Verifique os dados e tente novamente."
       );
     } finally {
       setLoading(false);

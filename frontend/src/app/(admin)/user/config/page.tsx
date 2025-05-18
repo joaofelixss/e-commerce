@@ -55,16 +55,8 @@ const SettingsPage = () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar a senha:", error);
-      let errorMessage =
-        error.message || "Erro ao atualizar a senha. Tente novamente.";
-      if (error.response?.data?.message) {
-        // Tenta pegar a mensagem do backend
-        errorMessage = error.response.data.message;
-      }
-      setPasswordError(errorMessage);
-      toast.error(errorMessage);
     } finally {
       setIsPasswordLoading(false);
     }
@@ -99,16 +91,8 @@ const SettingsPage = () => {
       toast.success("Email atualizado com sucesso!");
       setCurrentEmail("");
       setNewEmail("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar o email:", error);
-      let errorMessage =
-        error.message || "Erro ao atualizar o email. Tente novamente.";
-      if (error.response?.data?.message) {
-        // Tenta pegar a mensagem do backend
-        errorMessage = error.response.data.message;
-      }
-      setEmailError(errorMessage);
-      toast.error(errorMessage);
     } finally {
       setIsEmailLoading(false);
     }

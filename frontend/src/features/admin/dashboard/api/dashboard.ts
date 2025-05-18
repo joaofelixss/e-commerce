@@ -15,7 +15,7 @@ export const getTotalRevenue = async (): Promise<number> => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar faturamento total:", error);
     throw error;
   }
@@ -32,7 +32,7 @@ export const getOrderCounts = async (): Promise<{
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar contagem de pedidos:", error);
     throw error;
   }
@@ -45,7 +45,7 @@ export const getLowStockCount = async (): Promise<number> => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar contagem de baixo estoque:", error);
     throw error;
   }
@@ -64,7 +64,7 @@ export const getSalesPerformance = async (): Promise<
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar desempenho de vendas:", error);
     throw error;
   }
@@ -90,7 +90,7 @@ export const getRecentOrders = async (
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar pedidos recentes:", error);
     throw error;
   }
@@ -107,7 +107,7 @@ export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar produtos com baixo estoque:", error);
     throw error;
   }
@@ -129,7 +129,7 @@ export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data; // A resposta agora tem a propriedade 'pedidos'
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar todos os pedidos:", error);
     throw error;
   }
@@ -199,7 +199,7 @@ export const updateOrderStatus = async (
     );
     // Se a requisição for bem-sucedida, a API geralmente retorna um status 200 ou 204
     console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
     throw error;
   }

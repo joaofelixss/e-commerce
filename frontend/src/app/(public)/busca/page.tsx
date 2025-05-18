@@ -34,8 +34,8 @@ const BuscaPage = () => {
           setResultados([]); // Limpa os resultados se não houver query
         }
         setLoading(false);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar produtos.");
+      } catch (err: unknown) {
+        setError("Erro ao buscar produtos.");
         setResultados([]);
         setLoading(false);
         console.error(`Erro ao buscar produtos com a query "${query}":`, err);

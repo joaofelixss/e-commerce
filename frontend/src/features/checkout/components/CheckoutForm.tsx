@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
 import { FaWhatsapp } from "react-icons/fa";
-import WhatsappMessageGenerator from "@/features/checkout/components/WhatsappMessageGenerator"; // Import o componente
+import WhatsappMessageGenerator from "@/features/checkout/components/WhatsappMessageGenerator";
 import { createPedido } from "@/api/pedidos";
 
 interface ViaCepResponse {
@@ -153,9 +153,7 @@ const CheckoutForm = () => {
       }
     } catch (error) {
       console.error("Erro ao buscar CEP:", error);
-      toast.error("Ocorreu um erro ao tentar buscar o endereço.", {
-        title: "Erro ao buscar CEP",
-      });
+      toast.error("Ocorreu um erro ao tentar buscar o endereço.", {});
     }
   };
 
@@ -243,7 +241,7 @@ const CheckoutForm = () => {
       const pedidoData: CreatePedidoData = {
         produtos: cartItems.map((item) => ({
           produtoId: item.id,
-          quantidade: item.quantity,
+          quantidade: item.quantidade,
         })),
         total: totalComFrete,
         enderecoEntrega: desejaEntrega
@@ -285,7 +283,7 @@ const CheckoutForm = () => {
             response.message || "Ocorreu um erro ao processar o pedido."
           );
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Erro ao enviar pedido para a API:", error);
         toast.error("Ocorreu um erro ao enviar o pedido.");
       } finally {

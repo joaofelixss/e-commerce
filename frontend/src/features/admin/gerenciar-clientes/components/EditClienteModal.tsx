@@ -87,7 +87,7 @@ const EditClienteModal: React.FC<EditClienteModalProps> = ({
       if (onClienteUpdated) {
         onClienteUpdated();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao atualizar cliente:", error);
       toast.error("Erro ao atualizar cliente.");
     }

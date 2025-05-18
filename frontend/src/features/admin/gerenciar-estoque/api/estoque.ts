@@ -25,7 +25,7 @@ export const getStockLevels = async (): Promise<StockItem[]> => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data; // Esperamos um array de objetos StockItem
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar os níveis de estoque:", error);
     throw error;
   }
@@ -49,7 +49,7 @@ export const updateStockLevel = async (
     );
     // Se a requisição for bem-sucedida
     console.log(`Estoque do item ${itemId} atualizado com sucesso.`);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Erro ao atualizar o estoque do item ${itemId}:`, error);
     throw error;
   }
@@ -95,7 +95,7 @@ export const getEstoqueWhatsAppText = async (): Promise<string> => {
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar a lista de estoque para WhatsApp:", error);
     throw error;
   }

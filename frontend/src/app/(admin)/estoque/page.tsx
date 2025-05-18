@@ -44,7 +44,7 @@ const StockPage = () => {
     try {
       const data = await getStockLevels();
       setStockItems(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar os níveis de estoque.");
       console.error("Erro ao buscar níveis de estoque:", err);
       toast.error("Erro ao carregar os níveis de estoque.");
@@ -101,8 +101,8 @@ const StockPage = () => {
     const searchLower = searchTerm.toLowerCase();
     const nameMatch = item.nome.toLowerCase().includes(searchLower);
     const variationMatch =
-      item.variacao?.toLowerCase().includes(searchLower) || false; // Garante que variationMatch seja booleano
-    const combinedNameVariationMatch = nameMatch || variationMatch; // Busca em ambos os campos
+      item.variacao?.toLowerCase().includes(searchLower) || false;
+    const combinedNameVariationMatch = nameMatch || variationMatch;
 
     if (!statusFilter || statusFilter === "todos") {
       return combinedNameVariationMatch;
@@ -184,7 +184,7 @@ const StockPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredStockItems.map((item) => (
+            {stockItems.map((item) => (
               <TableRow key={`${item.variacaoId}`}>
                 <TableCell className="px-4 py-2 font-medium">
                   {item.nome}

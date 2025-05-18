@@ -10,7 +10,7 @@ interface FavoriteItem {
   // Adicione outras propriedades relevantes do produto que você precisa exibir
 }
 
-interface FavoritesState {
+export interface FavoritesState {
   items: FavoriteItem[];
   addItem: (product: {
     id: string;

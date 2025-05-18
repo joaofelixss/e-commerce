@@ -4,5 +4,5 @@ export interface StockItem {
   quantidade: number;
   nivelMinimo?: number | null;
   variacao?: string;
-  variacaoId: string;
+  variacaoId?: string;
 }

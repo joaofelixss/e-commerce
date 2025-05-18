@@ -6,7 +6,7 @@ export interface Product {
   tamanho?: string;
   cor?: string;
   numero?: number;
-  categoriaId?: string;
+  categoriaId?: string | undefined;
   quantidade?: number;
   estoque?: number;
   nivelMinimo?: number;

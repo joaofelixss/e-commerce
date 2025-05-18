@@ -47,7 +47,7 @@ const ProductsPage = () => {
     try {
       const response = await getAllProducts();
       setProducts(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar os produtos.");
       console.error("Erro ao buscar produtos:", err);
       toast.error("Erro ao carregar os produtos.");
@@ -151,15 +151,7 @@ const ProductsPage = () => {
                   R$ {product.preco.toFixed(2)}
                 </TableCell>
                 <TableCell className="px-4 py-2 hidden sm:block">
-                  {product.imagemUrl ? (
-                    <img
-                      src={product.imagemUrl}
-                      alt={product.nome}
-                      className="h-8 w-8 rounded-sm object-cover"
-                    />
-                  ) : (
-                    <span className="text-gray-500">Sem imagem</span>
-                  )}
+                  {product.imagemUrl}
                 </TableCell>
                 <TableCell className="px-4 py-2">
                   <div className="flex items-center gap-2">

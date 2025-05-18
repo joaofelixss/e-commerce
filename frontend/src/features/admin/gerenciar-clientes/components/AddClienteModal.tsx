@@ -64,7 +64,7 @@ const AddClienteModal: React.FC<AddClienteModalProps> = ({
       if (onClienteAdded) {
         onClienteAdded(); // Recarrega a lista de clientes na página principal
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao adicionar cliente:", error);
       toast.error("Erro ao adicionar cliente.");
     }

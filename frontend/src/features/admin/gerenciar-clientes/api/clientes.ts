@@ -44,7 +44,7 @@ export const getClientes = async (): Promise<Cliente[]> => {
       }
     );
     return response.data.data; // Acessamos a propriedade 'data' para obter o array de clientes
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao buscar clientes:", error);
     throw error;
   }
@@ -63,7 +63,7 @@ export const addCliente = async (data: ClienteFormData): Promise<Cliente> => {
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao adicionar cliente:", error);
     throw error;
   }
@@ -85,7 +85,7 @@ export const updateCliente = async (
       }
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Erro ao atualizar cliente com ID ${id}:`, error);
     throw error;
   }
@@ -100,7 +100,7 @@ export const deleteCliente = async (id: string): Promise<void> => {
       },
     });
     console.log(`Cliente com ID ${id} deletado com sucesso.`);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Erro ao deletar cliente com ID ${id}:`, error);
     throw error;
   }

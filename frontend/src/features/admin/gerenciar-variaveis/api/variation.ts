@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000";
 
-export const getVariablesByProductId = async (productId: string) => {
+export const getVariablesByProductId = async (productId: string | string[]) => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}/produtos/${productId}/variacoes` // Use a rota correta para variações
@@ -19,7 +19,7 @@ export const getVariablesByProductId = async (productId: string) => {
 };
 
 export const addVariable = async (
-  productId: string,
+  productId: string | string[],
   newVariableData: {
     cor: string;
     numero?: number;
@@ -45,7 +45,7 @@ export const addVariable = async (
 };
 
 export const updateVariable = async (
-  productId: string,
+  productId: string | string[],
   variableId: string,
   updatedVariableData: {
     cor?: string;
@@ -71,7 +71,10 @@ export const updateVariable = async (
   }
 };
 
-export const deleteVariable = async (productId: string, variableId: string) => {
+export const deleteVariable = async (
+  productId: string | string[],
+  variableId: string
+) => {
   try {
     const response = await axios.delete(
       `${API_BASE_URL}/produtos/${productId}/variacoes/${variableId}` // Use a rota correta para variações

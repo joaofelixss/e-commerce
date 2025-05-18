@@ -52,7 +52,6 @@ const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
     if (sizesContainerRef.current) {
       const focusedElement = sizesContainerRef.current.querySelector(":focus");
       if (focusedElement) {
-        focusedElement.blur();
       }
     }
   }, []); // Executa apenas uma vez após a montagem
@@ -187,7 +186,6 @@ const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
             Tamanho
           </Label>
           <div className="flex items-center space-x-2" ref={sizesContainerRef}>
-            {console.log("Available Sizes on Render:", availableSizes)}
             {availableSizes.map((size) => {
               const isSizeAvailable = variants.some(
                 (v) => v.numero === size && v.disponivel !== false

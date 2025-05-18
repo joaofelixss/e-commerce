@@ -17,7 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import AddCategoryModal from "@/features/admin/gerenciar-categorias/components/AddCategoryModal";
 import EditCategoryModal from "@/features/admin/gerenciar-categorias/components/EditCategoryModal";
-import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import {
   Dialog,
@@ -46,7 +45,6 @@ const CategoriesPage = () => {
   const [categoryToDeleteId, setCategoryToDeleteId] = useState<string | null>(
     null
   );
-  const router = useRouter();
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -54,7 +52,7 @@ const CategoriesPage = () => {
     try {
       const response = await getAllCategories();
       setCategories(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Erro ao carregar as categorias.");
       console.error("Erro ao buscar categorias:", err);
       toast.error("Erro ao carregar as categorias.");

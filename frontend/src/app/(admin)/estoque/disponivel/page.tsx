@@ -20,7 +20,7 @@ const GerenciamentoEstoquePage = () => {
     try {
       await gerarListaEstoque();
       setWhatsappText(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro ao gerar e baixar a lista de estoque (PDF):", err);
       setErrorPdf("Erro ao gerar e baixar a lista de estoque (PDF).");
     } finally {
@@ -35,7 +35,7 @@ const GerenciamentoEstoquePage = () => {
       const text = await getEstoqueWhatsAppText();
       setWhatsappText(text);
       setErrorWhatsapp(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro ao gerar lista de estoque para WhatsApp:", err);
       setErrorWhatsapp("Erro ao gerar lista de estoque para WhatsApp.");
       setWhatsappText(null);

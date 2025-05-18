@@ -35,8 +35,8 @@ const Footer = () => {
 
       toast.success(`Obrigado por se inscrever com o e-mail: ${email}`);
       setEmail("");
-    } catch (error: any) {
-      toast.error(error.message || "Ocorreu um erro ao tentar assinar.");
+    } catch (error: unknown) {
+      toast.error("Ocorreu um erro ao tentar assinar.");
     } finally {
       setIsSubscribing(false);
     }
