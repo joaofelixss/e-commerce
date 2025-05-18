@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+//import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -76,7 +76,7 @@ export class EstoqueService {
     return tabela;
   }
 
-  @Cron(CronExpression.EVERY_HOUR) // Executa a cada hora
+  // @Cron(CronExpression.EVERY_HOUR) // Executa a cada hora
   async verificarNivelBaixoEstoque() {
     this.logger.log('Verificando níveis baixos de estoque...');
     const produtos = await this.prisma.produto.findMany({

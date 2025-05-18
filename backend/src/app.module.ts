@@ -10,7 +10,7 @@ import { CategoriasModule } from './modules/categorias/categorias.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProdutosModule } from './modules/produtos/produtos.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { ScheduleModule } from '@nestjs/schedule';
+//import { ScheduleModule } from '@nestjs/schedule';
 import { EstoqueService } from './modules/estoque/estoque.service';
 import { NestFactory, NestApplication } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -33,7 +33,7 @@ import { VendasModule } from './modules/vendas/vendas.module';
     CategoriasModule,
     ProdutosModule,
     DashboardModule,
-    ScheduleModule.forRoot(),
+    //  ScheduleModule.forRoot(),
     VariacoesModule,
     AdminProfileModule,
     VendasModule,
