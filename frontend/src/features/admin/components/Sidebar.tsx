@@ -9,7 +9,6 @@ import {
   UsersIcon,
   ChartPieIcon,
   SettingsIcon,
-  type LucideIcon,
   TagIcon,
   ShoppingCartIcon,
   UserRound,
@@ -18,11 +17,13 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Sidebar,
+  SidebarProvider,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NavMain } from "./nav-main";
@@ -37,29 +38,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 
-interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
+interface SidebarProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-}
-
-interface NavItem {
-  title: string;
-  url: string;
-  icon?: LucideIcon;
-  submenu?: {
-    title: string;
-    url: string;
-  }[];
-}
-
-interface NavDocumentItem {
-  name: string;
-  url: string;
-  icon: LucideIcon;
-  submenu?: {
-    title: string;
-    url: string;
-  }[];
+  className?: string;
 }
 
 const mockUser = {
@@ -68,7 +50,7 @@ const mockUser = {
   email: "admin@example.com",
 };
 
-const menuItems: NavItem[] = [
+const menuItems = [
   {
     title: "Dashboard",
     url: "/dashboard",
@@ -115,8 +97,8 @@ const menuItems: NavItem[] = [
     url: "/vendas",
     icon: ShoppingCartIcon,
     submenu: [
-      { title: "Vendas Realizadas", url: "/Vendas" },
-      { title: "Adicionar Venda", url: "/Vendas" },
+      { title: "Vendas Realizadas", url: "/vendas" },
+      { title: "Adicionar Venda", url: "/vendas/adicionar" },
     ],
   },
   {
@@ -135,7 +117,7 @@ const menuItems: NavItem[] = [
   },
 ];
 
-const documentsData: NavDocumentItem[] = [
+const documentsData = [
   {
     name: "Relatórios",
     url: "/relatorios",
@@ -148,11 +130,9 @@ const documentsData: NavDocumentItem[] = [
   },
 ];
 
-const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
+const SidebarInner: React.FC = () => {
   const router = useRouter();
-  const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const isMobile = () => window.innerWidth < 768;
+  const { isMobile } = useSidebar();
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -161,10 +141,8 @@ const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
 
   return (
     <Sidebar
-      open={open}
-      onOpenChange={onOpenChange}
-      collapsible={!isMobile()}
-      collapsed={!isMobile() && isCollapsed}
+      variant="sidebar"
+      collapsible={!isMobile ? "offcanvas" : "none"}
       className="bg-secondary/95 backdrop-blur-sm shadow-md border-r border-border"
     >
       <SidebarHeader>
@@ -181,12 +159,14 @@ const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <ScrollArea className="h-full">
           <NavMain items={menuItems} />
-          <NavDocuments items={documentsData} />{" "}
+          <NavDocuments items={documentsData} />
         </ScrollArea>
       </SidebarContent>
+
       <SidebarFooter>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -222,6 +202,14 @@ const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
         </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
+  );
+};
+
+const SidebarComponent: React.FC<SidebarProps> = ({ open, onOpenChange }) => {
+  return (
+    <SidebarProvider open={open} onOpenChange={onOpenChange}>
+      <SidebarInner />
+    </SidebarProvider>
   );
 };
 
