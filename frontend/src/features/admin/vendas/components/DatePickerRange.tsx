@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -46,15 +45,7 @@ const DatePickerRange: React.FC<DatePickerRangeProps> = ({ onDateChange }) => {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
-          <Calendar
-            mode="range"
-            defaultMonth={new Date()}
-            selected={date}
-            onSelect={setDate}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
+        <PopoverContent className="w-auto p-0"></PopoverContent>
       </Popover>
     </div>
   );

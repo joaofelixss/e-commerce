@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -133,14 +132,7 @@ const AddManualSaleModal: React.FC<AddManualSaleModalProps> = ({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={dataVenda}
-                  onSelect={setDataVenda}
-                  className="rounded-md border"
-                />
-              </PopoverContent>
+              <PopoverContent className="w-auto p-0"></PopoverContent>
             </Popover>
           </div>
           {submitError && <p className="text-red-500 text-sm">{submitError}</p>}
