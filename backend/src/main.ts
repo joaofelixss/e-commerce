@@ -4,14 +4,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: 'https://e-commerce-two-beta-36.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // se precisar usar cookies
-  });
+  // Ativa CORS para qualquer origem (teste apenas)
+  app.enableCors(true);
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(3000);
   console.log('Aplicação rodando na porta 3000');
 }
 
