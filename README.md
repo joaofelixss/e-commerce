@@ -67,6 +67,7 @@ O checkout simplificado envia os pedidos via WhatsApp, com a opção futura de i
 * **Gerenciamento de estoque:**
     * Atualizar quantidades
     * Verificar alertas de baixo estoque
+* **Gerenciamento de CLientes:**
 * CRUD completo de produtos (Cadastro, Edição, Exclusão)
 * Cadastro de clientes e exportação de lista
 * Enviar estoque por WhatsApp ou e-mail
