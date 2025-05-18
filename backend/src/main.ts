@@ -5,7 +5,7 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
     app.enableCors({
-      origin: 'http://localhost:3002', // Permite requisições do frontend na porta 3002
+      origin: 'https://e-commerce-two-beta-36.vercel.app/', // Permite requisições do frontend na porta 3002
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
