@@ -1,11 +1,11 @@
 // src/api/products.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const getProductById = async (id: string | string[]) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/produtos/${id}`);
+    const response = await axios.get(`${backendUrl}/produtos/${id}`);
     return response.data;
   } catch (error: unknown) {
     console.error(`Erro ao buscar produto com ID ${id}:`, error);
@@ -15,7 +15,7 @@ export const getProductById = async (id: string | string[]) => {
 
 export const getAllProducts = async (params?: Record<string, unknown>) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/produtos`, { params });
+    const response = await axios.get(`${backendUrl}/produtos`, { params });
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao buscar todos os produtos:", error);
@@ -29,7 +29,7 @@ export const searchProducts = async (
 ) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/produtos?search=${query}`,
+      `${backendUrl}/produtos?search=${query}`,
       { params }
     );
     return response.data;

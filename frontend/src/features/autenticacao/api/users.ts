@@ -1,7 +1,7 @@
 // /src/features/admin/autenticacao/api/users.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -32,7 +32,7 @@ export const updatePassword = async (
 ): Promise<void> => {
   const token = getToken();
   try {
-    await axios.patch(`${API_BASE_URL}/admin/profile/change-password`, data, {
+    await axios.patch(`${backendUrl}/admin/profile/change-password`, data, {
       // Endpoint corrigido
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ export const updatePassword = async (
 export const updateEmail = async (data: UpdateEmailData): Promise<void> => {
   const token = getToken();
   try {
-    await axios.patch(`${API_BASE_URL}/admin/profile/change-email`, data, {
+    await axios.patch(`${backendUrl}/admin/profile/change-email`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -65,7 +65,7 @@ export const getAdminProfile = async (): Promise<AdminProfileResponse> => {
   const token = getToken();
   try {
     const response = await axios.get<AdminProfileResponse>(
-      `${API_BASE_URL}/admin/profile`,
+      `${backendUrl}/admin/profile`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 interface PedidoItem {
   produtoId: string;
@@ -53,7 +53,7 @@ export const createPedido = async (
 ): Promise<CreatePedidoResponse> => {
   try {
     const response = await axios.post<CreatePedidoResponse>(
-      `${API_BASE_URL}/pedidos/checkout`,
+      `${backendUrl}/pedidos/checkout`,
       pedidoData
     );
     return response.data;

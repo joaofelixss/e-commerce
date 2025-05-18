@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000"; // Certifique-se de que esta é a URL correta da sua API
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // Defina as interfaces com base na sua API Nest.js
 interface ProdutoVenda {
@@ -95,7 +95,7 @@ interface AddManualSalePayload {
 
 export const getOrders = async (): Promise<Order[]> => {
   try {
-    const response = await axios.get<Order[]>(`${API_BASE_URL}/pedidos`); // Ajuste o endpoint se necessário
+    const response = await axios.get<Order[]>(`${backendUrl}/pedidos`); // Ajuste o endpoint se necessário
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao buscar pedidos:", error);
@@ -105,7 +105,7 @@ export const getOrders = async (): Promise<Order[]> => {
 
 export const getSales = async (): Promise<Venda[]> => {
   try {
-    const response = await axios.get<Venda[]>(`${API_BASE_URL}/vendas`); // Endpoint para buscar todas as vendas
+    const response = await axios.get<Venda[]>(`${backendUrl}/vendas`); // Endpoint para buscar todas as vendas
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao buscar vendas:", error);
@@ -118,7 +118,7 @@ export const addManualSale = async (
 ): Promise<Venda> => {
   try {
     const response = await axios.post<Venda>(
-      `${API_BASE_URL}/vendas`, // Endpoint para criar vendas (manuais ou a partir de pedidos)
+      `${backendUrl}/vendas`, // Endpoint para criar vendas (manuais ou a partir de pedidos)
       payload
     );
     return response.data;

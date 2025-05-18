@@ -1,7 +1,7 @@
 // frontend/src/api/clientes.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -36,7 +36,7 @@ export const getClientes = async (): Promise<Cliente[]> => {
   const token = getToken();
   try {
     const response = await axios.get<PaginatedResponse<Cliente>>(
-      `${API_BASE_URL}/clientes`,
+      `${backendUrl}/clientes`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ export const addCliente = async (data: ClienteFormData): Promise<Cliente> => {
   const token = getToken();
   try {
     const response = await axios.post<Cliente>(
-      `${API_BASE_URL}/clientes`,
+      `${backendUrl}/clientes`,
       data,
       {
         headers: {
@@ -76,7 +76,7 @@ export const updateCliente = async (
   const token = getToken();
   try {
     const response = await axios.patch<Cliente>(
-      `${API_BASE_URL}/clientes/${id}`,
+      `${backendUrl}/clientes/${id}`,
       data,
       {
         headers: {
@@ -94,7 +94,7 @@ export const updateCliente = async (
 export const deleteCliente = async (id: string): Promise<void> => {
   const token = getToken();
   try {
-    await axios.delete(`${API_BASE_URL}/clientes/${id}`, {
+    await axios.delete(`${backendUrl}/clientes/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

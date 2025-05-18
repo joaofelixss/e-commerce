@@ -1,7 +1,7 @@
 // src/api/categories.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000"; // Certifique-se de usar a mesma URL base
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const addCategory = async (newCategoryData: {
   nome: string;
@@ -9,7 +9,7 @@ export const addCategory = async (newCategoryData: {
 }) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/categorias`,
+      `${backendUrl}/categorias`,
       newCategoryData
     );
     return response.data; // Retorna os dados da categoria criada (opcional)
@@ -21,7 +21,7 @@ export const addCategory = async (newCategoryData: {
 
 export const getCategory = async (id: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/categorias/${id}`);
+    const response = await axios.get(`${backendUrl}/categorias/${id}`);
     return response.data;
   } catch (error: unknown) {
     console.error(`Erro ao buscar categoria com ID ${id}:`, error);
@@ -39,7 +39,7 @@ export const updateCategory = async (
 ) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/categorias/${id}`,
+      `${backendUrl}/categorias/${id}`,
       updatedCategoryData
     );
     return response.data; // Retorna os dados da categoria atualizada (opcional)
@@ -51,7 +51,7 @@ export const updateCategory = async (
 
 export const deleteCategory = async (id: string) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/categorias/${id}`);
+    const response = await axios.delete(`${backendUrl}/categorias/${id}`);
     return response.data; // Opcional: pode retornar dados sobre a exclusão
   } catch (error: unknown) {
     console.error(`Erro ao deletar categoria com ID ${id}:`, error);
@@ -61,7 +61,7 @@ export const deleteCategory = async (id: string) => {
 
 export const getAllCategories = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/categorias`);
+    const response = await axios.get(`${backendUrl}/categorias`);
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao carregar todas as categorias:", error);

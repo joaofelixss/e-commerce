@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Product } from "@/features/produtos/types/product"; // Importe a interface Product
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const useFetchProducts = (categoria?: string | null) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -16,7 +15,7 @@ export const useFetchProducts = (categoria?: string | null) => {
       setLoading(true);
       setError(null); // Limpa o erro ao iniciar uma nova busca
       try {
-        let url = `${API_BASE_URL}/produtos`;
+        let url = `${backendUrl}/produtos`;
         if (categoria) {
           url += `?categoria=${categoria}`;
         }

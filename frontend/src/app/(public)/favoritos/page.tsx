@@ -79,7 +79,7 @@ const FavoritosPage = () => {
       </h1>
       <div className="space-y-4 p-5">
         {favoriteProducts.map((product) => (
-          <FavoriteItem key={product.id} product={product} />
+          <FavoriteItem key={product.id} {...product} />
         ))}
       </div>
     </div>

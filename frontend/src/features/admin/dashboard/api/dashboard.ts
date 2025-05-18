@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -11,7 +11,7 @@ const getToken = () => {
 export const getTotalRevenue = async (): Promise<number> => {
   const token = getToken();
   try {
-    const response = await axios.get(`${API_BASE_URL}/dashboard/revenue`, {
+    const response = await axios.get(`${backendUrl}/dashboard/revenue`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -28,7 +28,7 @@ export const getOrderCounts = async (): Promise<{
 }> => {
   const token = getToken();
   try {
-    const response = await axios.get(`${API_BASE_URL}/dashboard/orders`, {
+    const response = await axios.get(`${backendUrl}/dashboard/orders`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -41,7 +41,7 @@ export const getOrderCounts = async (): Promise<{
 export const getLowStockCount = async (): Promise<number> => {
   const token = getToken();
   try {
-    const response = await axios.get(`${API_BASE_URL}/dashboard/low-stock`, {
+    const response = await axios.get(`${backendUrl}/dashboard/low-stock`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -58,7 +58,7 @@ export const getSalesPerformance = async (): Promise<
   const token = getToken();
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/dashboard/sales-performance`,
+      `${backendUrl}/dashboard/sales-performance`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -84,7 +84,7 @@ export const getRecentOrders = async (
   const token = getToken();
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/dashboard/recent-orders?limit=${limit}`,
+      `${backendUrl}/dashboard/recent-orders?limit=${limit}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -100,7 +100,7 @@ export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
   const token = getToken();
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/dashboard/low-stock-products`,
+      `${backendUrl}/dashboard/low-stock-products`,
       {
         // Nova rota no backend
         headers: { Authorization: `Bearer ${token}` },
@@ -124,7 +124,7 @@ interface LowStockProduct {
 export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
   const token = getToken();
   try {
-    const response = await axios.get(`${API_BASE_URL}/pedidos`, {
+    const response = await axios.get(`${backendUrl}/pedidos`, {
       // Use o endpoint /pedidos
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -191,7 +191,7 @@ export const updateOrderStatus = async (
   try {
     const response = await axios.patch(
       // Ou axios.patch, dependendo da sua API
-      `${API_BASE_URL}/pedidos/${orderId}`, // Endpoint para atualizar o pedido
+      `${backendUrl}/pedidos/${orderId}`, // Endpoint para atualizar o pedido
       { status: newStatus }, // Envia o novo status no corpo da requisição
       {
         headers: { Authorization: `Bearer ${token}` },

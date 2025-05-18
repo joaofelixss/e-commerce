@@ -1,7 +1,7 @@
 // src/features/admin/gerenciar-produtos/api/products.ts
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const addProduct = async (newProductData: {
   nome: string;
@@ -11,7 +11,7 @@ export const addProduct = async (newProductData: {
 }) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/produtos`,
+      `${backendUrl}/produtos`,
       newProductData
     );
     return response.data; // Retorna os dados do produto criado (opcional)
@@ -23,7 +23,7 @@ export const addProduct = async (newProductData: {
 
 export const getProduct = async (id: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/produtos/${id}`);
+    const response = await axios.get(`${backendUrl}/produtos/${id}`);
     return response.data;
   } catch (error: unknown) {
     console.error(`Erro ao buscar produto com ID ${id}:`, error);
@@ -43,7 +43,7 @@ export const updateProduct = async (
 ) => {
   try {
     const response = await axios.patch(
-      `${API_BASE_URL}/produtos/${id}`,
+      `${backendUrl}/produtos/${id}`,
       updatedProductData
     );
     return response.data; // Retorna os dados do produto atualizado (opcional)
@@ -55,7 +55,7 @@ export const updateProduct = async (
 
 export const deleteProduct = async (id: string) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/produtos/${id}`);
+    const response = await axios.delete(`${backendUrl}/produtos/${id}`);
     return response.data; // Opcional: pode retornar dados sobre a exclusão
   } catch (error: unknown) {
     console.error(`Erro ao deletar produto com ID ${id}:`, error);

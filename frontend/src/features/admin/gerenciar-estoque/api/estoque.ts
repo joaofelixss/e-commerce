@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000"; // Sua API está na porta 3000
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("accessToken");
@@ -20,7 +20,7 @@ interface StockItem {
 export const getStockLevels = async (): Promise<StockItem[]> => {
   const token = getToken();
   try {
-    const response = await axios.get(`${API_BASE_URL}/estoque`, {
+    const response = await axios.get(`${backendUrl}/estoque`, {
       // Endpoint para buscar os níveis de estoque
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -41,7 +41,7 @@ export const updateStockLevel = async (
   try {
     const response = await axios.patch(
       // Ou axios.put, dependendo da sua API
-      `${API_BASE_URL}/estoque/${itemId}`, // Endpoint para atualizar o estoque do item (pode ser o ID da variação)
+      `${backendUrl}/estoque/${itemId}`, // Endpoint para atualizar o estoque do item (pode ser o ID da variação)
       { quantidade: newQuantity, nivelMinimo: newMinLevel }, // Envia os dados atualizados
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -88,7 +88,7 @@ export const getEstoqueWhatsAppText = async (): Promise<string> => {
   const token = getToken();
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/estoque/disponivel/whatsapp`,
+      `${backendUrl}/estoque/disponivel/whatsapp`,
       {
         headers: { Authorization: `Bearer ${token}` }, // Se a rota do WhatsApp também requer autenticação
         responseType: "text", // Esperamos uma resposta de texto
