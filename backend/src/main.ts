@@ -3,16 +3,16 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule);
-
-    app.enableCors({
-      origin: [
-        'http://localhost:3000',
-        'https://e-commerce-two-beta-36.vercel.app',
-      ],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
-      credentials: true,
+    const app = await NestFactory.create(AppModule, {
+      cors: {
+        origin: [
+          'http://localhost:3000',
+          'https://e-commerce-two-beta-36.vercel.app',
+        ],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+      },
     });
 
     await app.listen(3000);
