@@ -11,7 +11,7 @@ async function bootstrap() {
     credentials: true, // se precisar usar cookies
   });
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
   console.log('Aplicação rodando na porta 3000');
 }
 
