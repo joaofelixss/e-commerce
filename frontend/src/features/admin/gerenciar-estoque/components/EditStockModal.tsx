@@ -86,7 +86,9 @@ const EditStockModal: React.FC<EditStockModalProps> = ({
             </Label>
             <Input
               id="min-level"
-              value={minLevel !== undefined ? minLevel : ""}
+              value={
+                minLevel !== undefined && minLevel !== null ? minLevel : ""
+              }
               onChange={(e) =>
                 setMinLevel(
                   e.target.value === "" ? undefined : Number(e.target.value)

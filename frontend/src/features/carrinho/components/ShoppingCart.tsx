@@ -44,7 +44,11 @@ const ShoppingCart = () => {
     cor?: string | null | undefined,
     tamanho?: string | null | undefined
   ) => {
-    removeItemFromCart(itemId, cor, tamanho);
+    removeItemFromCart(
+      itemId,
+      cor !== undefined && cor !== null ? cor : "", // Se cor for undefined ou null, passa uma string vazia
+      tamanho !== undefined && tamanho !== null ? tamanho : "" // Se tamanho for undefined ou null, passa uma string vazia
+    );
     toast.error("Produto removido do carrinho!", {
       position: "top-right",
       autoClose: 2000,

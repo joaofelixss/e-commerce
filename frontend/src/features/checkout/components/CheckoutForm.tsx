@@ -129,6 +129,9 @@ const CheckoutForm = () => {
     setFormaPagamento(value);
   };
 
+  const [mostrarCamposEntregaDiferente, setMostrarCamposEntregaDiferente] =
+    React.useState(false);
+
   const buscarEnderecoPorCep = async (cep: string) => {
     if (!cep || cep.length !== 8) {
       toast.error("CEP inválido.");
@@ -137,14 +140,30 @@ const CheckoutForm = () => {
 
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      if (!response.ok) {
+        toast.error(`Erro ao buscar CEP: ${response.statusText}`);
+        setEndereco("");
+        setBairro("");
+        setCidade("");
+        setUf("");
+        return;
+      }
       const data: ViaCepResponse = await response.json();
 
-      if (!data.erro) {
+      // Verifica se as propriedades essenciais de um endereço estão presentes
+      if (
+        data &&
+        data.logradouro &&
+        data.bairro &&
+        data.localidade &&
+        data.uf
+      ) {
         setEndereco(data.logradouro);
         setBairro(data.bairro);
         setCidade(data.localidade);
         setUf(data.uf);
       } else {
+        // Se alguma propriedade essencial estiver faltando, considera o CEP como não encontrado
         toast.error("CEP não encontrado.");
         setEndereco("");
         setBairro("");
@@ -153,7 +172,11 @@ const CheckoutForm = () => {
       }
     } catch (error) {
       console.error("Erro ao buscar CEP:", error);
-      toast.error("Ocorreu um erro ao tentar buscar o endereço.", {});
+      toast.error("Ocorreu um erro ao tentar buscar o endereço.");
+      setEndereco("");
+      setBairro("");
+      setCidade("");
+      setUf("");
     }
   };
 
@@ -332,10 +355,11 @@ const CheckoutForm = () => {
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="desejaEntrega"
-              name="desejaEntrega"
-              checked={desejaEntrega}
-              onCheckedChange={setDesejaEntrega}
+              id="entregaDiferente"
+              checked={mostrarCamposEntregaDiferente}
+              onCheckedChange={(checked) => {
+                setMostrarCamposEntregaDiferente(checked === true); // Garante que 'checked' seja convertido para boolean
+              }}
             />
             <Label
               htmlFor="desejaEntrega"
