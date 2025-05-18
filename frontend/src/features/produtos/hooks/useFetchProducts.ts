@@ -6,7 +6,7 @@ import { Product } from "@/features/produtos/types/product"; // Importe a interf
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
-export const useFetchProducts = (categoria?: string) => {
+export const useFetchProducts = (categoria?: string | null) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

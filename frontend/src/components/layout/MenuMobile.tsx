@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -24,6 +24,11 @@ const MenuMobile = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -120,7 +125,7 @@ const MenuMobile = () => {
         >
           <ShoppingCart className="w-6 h-6" />
           <span className="text-xs">Carrinho</span>
-          {totalItemsInCart > 0 && (
+          {isHydrated && totalItemsInCart > 0 && (
             <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
               {totalItemsInCart}
             </span>

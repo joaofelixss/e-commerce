@@ -1,4 +1,3 @@
-// frontend/src/components/ProductVariantSelector.tsx
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { Label } from "@/components/ui/label";
@@ -51,7 +50,8 @@ const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
   useEffect(() => {
     if (sizesContainerRef.current) {
       const focusedElement = sizesContainerRef.current.querySelector(":focus");
-      if (focusedElement) {
+      if (focusedElement instanceof HTMLElement && focusedElement.blur) {
+        focusedElement.blur();
       }
     }
   }, []); // Executa apenas uma vez após a montagem
@@ -103,9 +103,9 @@ const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
             v.numero !== undefined &&
             v.cor === selectedColor // Filtrar por cor selecionada
         )
-        .map((v) => v.numero)
+        .map((v) => v.numero as number) // Casting para number após o filtro
     ),
-  ].sort((a, b) => (a || 0) - (b || 0));
+  ].sort((a, b) => a - b);
 
   return (
     <div className="space-y-4">
@@ -202,7 +202,7 @@ const ProductVariantSelector: React.FC<ProductVariantSelectorProps> = ({
                       : "cursor-not-allowed opacity-50"
                   )}
                   onClick={() => {
-                    console.log("Button Size Clicked:", size); // ADICIONE ESTE LOG
+                    console.log("Button Size Clicked:", size);
                     handleNumberClick(isSizeAvailable ? size : undefined);
                   }}
                   disabled={!isSizeAvailable}

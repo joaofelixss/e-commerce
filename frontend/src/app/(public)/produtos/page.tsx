@@ -4,15 +4,12 @@
 import React from "react";
 import ProductCard from "@/features/produtos/components/ProductCard";
 import { useFetchProducts } from "@/features/produtos/hooks/useFetchProducts";
+import { useSearchParams } from "next/navigation"; // Importe useSearchParams
 
-interface Props {
-  searchParams?: {
-    categoria?: string;
-  };
-}
+export default function ProductListPage() {
+  const searchParams = useSearchParams(); // Use o hook para acessar os search params
+  const categoria = searchParams.get("categoria"); // Obtenha o valor da categoria
 
-export default function ProductListPage({ searchParams }: Props) {
-  const categoria = searchParams?.categoria;
   const { products, loading, error } = useFetchProducts(categoria);
 
   const title = categoria

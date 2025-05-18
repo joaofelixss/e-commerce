@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,11 @@ const Navbar = () => {
   const totalFavorites = useFavoritesStore((state) => state.items.length);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -81,7 +86,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4 md:hidden">
           <Link href="/favoritos" className="relative">
             <Heart className="w-6 h-6" />
-            {totalFavorites > 0 && (
+            {isHydrated && totalFavorites > 0 && (
               <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                 {totalFavorites}
               </span>
@@ -89,7 +94,7 @@ const Navbar = () => {
           </Link>
           <Link href="/carrinho" className="relative">
             <ShoppingCart className="w-6 h-6" />
-            {totalItemsInCart > 0 && (
+            {isHydrated && totalItemsInCart > 0 && (
               <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                 {totalItemsInCart}
               </span>
@@ -120,7 +125,7 @@ const Navbar = () => {
               <Link href="/favoritos" className="flex items-center">
                 <Heart className="w-6 h-6 mr-2" />
                 Favoritos
-                {totalFavorites > 0 && (
+                {isHydrated && totalFavorites > 0 && (
                   <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                     {totalFavorites}
                   </span>
@@ -133,7 +138,7 @@ const Navbar = () => {
               <Link href="/carrinho" className="flex items-center">
                 <ShoppingCart className="w-6 h-6 mr-2" />
                 Carrinho
-                {totalItemsInCart > 0 && (
+                {isHydrated && totalItemsInCart > 0 && (
                   <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                     {totalItemsInCart}
                   </span>
@@ -187,7 +192,7 @@ const Navbar = () => {
             <Link href="/favoritos" className="flex items-center">
               <Heart className="w-6 h-6 mr-2 inline-block" />
               Favoritos
-              {totalFavorites > 0 && (
+              {isHydrated && totalFavorites > 0 && (
                 <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                   {totalFavorites}
                 </span>
@@ -202,7 +207,7 @@ const Navbar = () => {
             <Link href="/carrinho" className="flex items-center">
               <ShoppingCart className="w-6 h-6 mr-2 inline-block" />
               Carrinho
-              {totalItemsInCart > 0 && (
+              {isHydrated && totalItemsInCart > 0 && (
                 <span className="absolute top-[-0.5rem] right-[-0.5rem] bg-foreground text-white text-[0.7rem] rounded-full px-1">
                   {totalItemsInCart}
                 </span>
