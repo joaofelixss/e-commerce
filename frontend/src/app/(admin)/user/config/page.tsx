@@ -28,13 +28,20 @@ const SettingsPage = () => {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(
-    localStorage.getItem(LOCAL_STORAGE_PROFILE_IMAGE_KEY) || null
-  );
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [isRemovingImage, setIsRemovingImage] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedImage = localStorage.getItem(LOCAL_STORAGE_PROFILE_IMAGE_KEY);
+      if (storedImage) {
+        setProfileImage(storedImage);
+      }
+    }
+  }, []);
 
   // Função para lidar com a atualização da senha
   const handleUpdatePassword = async () => {
