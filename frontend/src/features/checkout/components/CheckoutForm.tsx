@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore, CartItem } from "@/features/produtos/store/cartStore";
@@ -34,6 +32,33 @@ interface ViaCepResponse {
   siafi: string;
 }
 
+interface CreatePedidoData {
+  produtos: { produtoId: string; quantidade: number }[];
+  total: number;
+  enderecoEntrega: {
+    cep: string;
+    rua: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    numero: string;
+    complemento: string | null;
+  } | null;
+  cliente: {
+    nome: string;
+    telefone: string;
+    endereco: string | null;
+    numero: string | null;
+    complemento: string | null;
+    bairro: string | null;
+    cidade: string | null;
+    uf: string | null;
+    cep: string | null;
+  };
+  observacoes: string | null;
+  formaPagamento: "dinheiro" | "pix" | "cartao";
+}
+
 const CheckoutForm = () => {
   const cartItems = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
@@ -60,6 +85,7 @@ const CheckoutForm = () => {
     "dinheiro" | "pix" | "cartao"
   >("dinheiro");
   const [frete] = useState(5.0); // Valor fixo do frete
+  const [submitting, setSubmitting] = useState(false); // Estado para controlar o envio
 
   const totalCompra = totalPrice();
   const totalComFrete = desejaEntrega ? totalCompra + frete : totalCompra;
@@ -194,7 +220,7 @@ const CheckoutForm = () => {
         return;
       }
 
-      const whatsappMessage = WhatsappMessageGenerator({
+      const message = WhatsappMessageGenerator({
         name,
         phone,
         desejaEntrega,
@@ -211,6 +237,8 @@ const CheckoutForm = () => {
         formaPagamento,
         notes,
       });
+
+      const whatsappUrl = `https://wa.me/5569992784621?text=${message}`; // A mensagem JÁ está URI encoded
 
       const pedidoData: CreatePedidoData = {
         produtos: cartItems.map((item) => ({
@@ -232,7 +260,7 @@ const CheckoutForm = () => {
         cliente: {
           nome: name,
           telefone: phone,
-          endereco: null, // Você já está enviando o endereço de entrega separadamente
+          endereco: null,
           numero: null,
           complemento: null,
           bairro: null,
@@ -249,10 +277,7 @@ const CheckoutForm = () => {
         const response = await createPedido(pedidoData);
         if (response.success) {
           toast.success("Pedido enviado com sucesso!");
-          window.open(
-            `https://wa.me/5569992784621?text=${whatsappMessage}`,
-            "_blank"
-          );
+          window.open(whatsappUrl, "_blank"); // Abre a URL já com a mensagem codificada
           clearCart();
           router.push("/pedido-enviado");
         } else {
@@ -271,8 +296,6 @@ const CheckoutForm = () => {
     }
   };
 
-  // Adicione um estado para controlar o envio do formulário
-  const [submitting, setSubmitting] = useState(false);
   return (
     <Card className="max-w-md mx-auto mt-8 mb-15 p-4">
       <Toaster richColors />
@@ -442,9 +465,10 @@ const CheckoutForm = () => {
           <Button
             type="submit"
             className="w-full bg-foreground text-background font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={submitting}
           >
-            <FaWhatsapp className="w-6 h-6" />
-            Enviar Pedido via WhatsApp
+            <FaWhatsapp className="w-6 h-6 mr-2" />
+            {submitting ? "Enviando Pedido..." : "Enviar Pedido via WhatsApp"}
           </Button>
         </form>
       </CardContent>

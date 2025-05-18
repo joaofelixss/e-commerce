@@ -10,11 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-interface FavoriteItemProps {
-  product: Product; // Agora espera o objeto Product completo
-}
-
-const FavoriteItem: React.FC<FavoriteItemProps> = ({ product }) => {
+const FavoriteItem: React.FC<Product> = ({ product }) => {
   const removeItem = useFavoritesStore((state) => state.removeItem);
 
   const handleRemove = () => {
@@ -32,26 +28,23 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ product }) => {
 
   return (
     <div className="border shadow-md rounded-md">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4">
+      <div className="flex flex-row items-center justify-between p-10">
         <Link
-          href={`/produto/${product.slug || `/produtos/${product.id}`}`} // Use o slug do product
+          href={`/produtos/${product.id}`} // Use o slug do product
           className="relative w-24 h-24 sm:w-32 sm:h-32 mr-4 mb-4 sm:mb-0 cursor-pointer rounded overflow-hidden"
         >
           <Image
-            src={product.imagemUrl || "/oferta.png"}
+            src={product.imagemUrl}
             alt={product.nome}
             layout="fill"
             objectFit="cover"
-            onError={(e) => (e.currentTarget.src = "/oferta.png")}
           />
         </Link>
         <div className="flex-grow">
-          <Link href={`/produto/${product.slug || `/produtos/${product.id}`}`}>
-            <h3 className="text-lg font-semibold mb-1 cursor-pointer hover:underline">
-              {product.nome}
-            </h3>
-          </Link>
-          <p className="text-gray-600 mb-2">
+          <h3 className="text-lg font-semibold mb-2 text-gray-800  transition-colors duration-200 cursor-pointer">
+            {product.nome}
+          </h3>
+          <p className="text-gray-600 mb-2 font-semibold text-lg">
             R$ {product.preco?.toFixed(2) ?? "..."}
           </p>
           {product.cor && (
@@ -61,7 +54,7 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ product }) => {
             <p className="text-gray-500 mb-1">Tamanho: {product.tamanho}</p>
           )}
         </div>
-        <div className="flex items-center justify-end">
+        <div className="">
           <Button
             variant="destructive"
             size="icon"

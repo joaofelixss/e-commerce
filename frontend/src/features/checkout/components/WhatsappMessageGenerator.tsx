@@ -1,4 +1,3 @@
-// components/WhatsappMessageGenerator.tsx
 import { CartItem } from "@/features/produtos/store/cartStore";
 
 interface Props {
@@ -49,10 +48,10 @@ const WhatsappMessageGenerator: React.FC<Props> = ({
 
   const formattedFormaPagamento =
     formaPagamento === "dinheiro"
-      ? "Dinheiro"
+      ? "Dinheiro 💰"
       : formaPagamento === "pix"
-      ? "Pix"
-      : "Cartão";
+      ? "Pix 💸"
+      : "Cartão 💳";
 
   let message = `🎉 Novo Pedido! 🎉\n\n*Dados do Cliente:*\n👤 Nome: ${name}\n📞 Telefone: ${phone}\n\n`;
 

@@ -10,8 +10,8 @@ import {
   Minus,
   ShoppingCart as ShoppingCartIcon,
   ArrowLeft,
-  CheckCircle, // Ícone para Finalizar Pedido
-  XCircle, // Ícone para Limpar Carrinho
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,7 +19,6 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface CartItem {
   id: string;
@@ -42,8 +41,8 @@ const ShoppingCart = () => {
 
   const handleRemoveItem = (
     itemId: string,
-    cor?: string | null,
-    tamanho?: string | null
+    cor?: string | null | undefined,
+    tamanho?: string | null | undefined
   ) => {
     removeItemFromCart(itemId, cor, tamanho);
     toast.error("Produto removido do carrinho!", {
@@ -127,21 +126,15 @@ const ShoppingCart = () => {
         {cartItems.map((item) => (
           <Card
             key={`${item.id}-${item.cor}-${item.tamanho}`}
-            className="border shadow-md"
+            className="border shadow-md p-5 rounded-lg bg-white hover:shadow-lg transition-shadow duration-200"
           >
-            <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4">
+            <CardContent className="flex flex-row items-center justify-between p-1">
               <div
                 onClick={() => handleViewDetails(item.id)}
-                className="relative w-24 h-24 sm:w-32 sm:h-32 mr-4 mb-4 sm:mb-0 cursor-pointer"
+                className="relative w-32 h-32 mr-4 mb-4 sm:mb-0 cursor-pointer"
               >
                 <Image
-                  src={
-                    item.imagemUrl
-                      ? item.imagemUrl.startsWith("http")
-                        ? item.imagemUrl
-                        : "/oferta.png"
-                      : "/oferta.png"
-                  }
+                  src={item.imagemUrl}
                   alt={item.nome}
                   layout="fill"
                   objectFit="contain"
@@ -165,7 +158,7 @@ const ShoppingCart = () => {
                   Preço: R$ {item.preco.toFixed(2)}
                 </p>
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-700 font-medium">Quantidade:</span>
+                  <span className="text-gray-700 font-medium">QTD:</span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -202,12 +195,12 @@ const ShoppingCart = () => {
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-blue-700 mt-2">
+                <p className="text-blue-700 mt-2 font-semibold">
                   Total: R$ {(item.preco * item.quantidade).toFixed(2)}
                 </p>
               </div>
               {/* Botão de remover centralizado na direita */}
-              <div className="flex items-center justify-end">
+              <div className="ml-6">
                 <Button
                   variant="destructive"
                   size="icon"
@@ -247,7 +240,7 @@ const ShoppingCart = () => {
             className="w-1/2 sm:w-auto bg-foreground text-background font-bold py-2 px-3 rounded-full transition-colors duration-200 flex items-center justify-center text-sm"
           >
             Finalizar
-            <CheckCircle className="ml-2 w-4 h-4" />
+            <CheckCircle className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </div>

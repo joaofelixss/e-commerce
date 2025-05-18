@@ -65,7 +65,7 @@ const FavoritosPage = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6 flex items-center justify-between">
+      <h1 className="text-2xl font-bold mb-6 flex items-center justify-between p-7">
         Meus Favoritos
         <Button
           variant="outline"
@@ -77,7 +77,7 @@ const FavoritosPage = () => {
           Limpar Favoritos
         </Button>
       </h1>
-      <div className="space-y-4">
+      <div className="space-y-4 p-5">
         {favoriteProducts.map((product) => (
           <FavoriteItem key={product.id} product={product} />
         ))}

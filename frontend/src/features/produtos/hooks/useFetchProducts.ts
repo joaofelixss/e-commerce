@@ -21,7 +21,7 @@ export const useFetchProducts = (categoria?: string) => {
           url += `?categoria=${categoria}`;
         }
         const response = await axios.get(url);
-        setProducts(response.data.data); // Assumindo que os produtos estão em response.data.data
+        setProducts(response.data.data); 
         setLoading(false);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar produtos.");

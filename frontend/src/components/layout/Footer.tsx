@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast, Toaster } from "sonner";
+import Image from "next/image"; // Importe o componente Image do Next.js
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -42,7 +43,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-100 py-12 text-gray-600 pb-5">
+    <footer className="bg-gray-100 py-12 text-gray-600 pb-8">
+      {" "}
+      {/* Aumentei o padding bottom para espaço da nova seção */}
       <Toaster />
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         {/* Seção de Contato */}
@@ -115,6 +118,18 @@ const Footer = () => {
         &copy; {new Date().getFullYear()} Sonia Aviamentos. Todos os direitos
         reservados.
       </div>
+      <a href="https://joaofelixss.github.io/" target="_blank">
+        <div className="mt-4 text-center text-gray-500 text-xs flex items-center justify-center space-x-2">
+          <span>Desenvolvido por</span>
+          <Image
+            src="/images/jogui.png"
+            alt="Logotipo JOGUI"
+            width={20} // Ajuste o tamanho conforme necessário
+            height={20} // Ajuste o tamanho conforme necessário
+          />
+          <span>JOGUI ⚡</span>
+        </div>
+      </a>
     </footer>
   );
 };

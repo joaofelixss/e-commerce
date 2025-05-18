@@ -2,13 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "@/features/produtos/store/cartStore";
 import { useFavoritesStore } from "@/features/produtos/store/favoritesStore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Brush, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FaWhatsapp } from "react-icons/fa";
 import { getProductImageUrl } from "@/lib/utils";
 
 interface Product {
@@ -16,7 +14,7 @@ interface Product {
   nome: string;
   preco: number;
   imagemUrl: string | null | undefined;
-  slug?: string; // Adicione a propriedade slug à interface Product (se existir)
+  slug?: string;
 }
 
 interface ProductCardProps {
@@ -36,22 +34,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
 
   const imageUrl = getProductImageUrl(product.imagemUrl);
 
-  const handleWhatsAppClick = () => {
-    const phoneNumber = "5569992784621";
-    const message = `Olá, gostaria de comprar o produto: ${
-      product.nome
-    } - R$ ${product.preco.toFixed(2)}`;
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      message
-    )}`;
-    window.open(whatsappURL, "_blank");
-  };
-
   const handleFavoriteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     if (isCurrentlyFavorite) {
       removeItemFromFavorites(productId);
-      toast.error("Removido dos favoritos!", { ...toastConfig });
+      toast.error("Removido dos favoritos!");
     } else {
       addItemToFavorites({
         id: product.id,
@@ -59,34 +46,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
         slug: product.slug || `/produtos/${product.id}`, // Use slug se existir, senão uma rota padrão
         nome: product.nome,
       });
-      toast.success("Adicionado aos favoritos!", { ...toastConfig });
+      toast.success("Adicionado aos favoritos!");
     }
   };
-
-  const handleAddToCartClick = () => {
-    useCartStore.getState().addItem({ ...product, quantidade: 1 });
-    toast.success(`${product.nome} adicionado ao carrinho!`, {
-      ...toastConfig,
-    });
-  };
-
-  const toastConfig = {
-    position: "top-right",
-    autoClose: 2000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  };
-
+  
   return (
     <div
       className={`bg-white rounded-md shadow-md p-4 flex flex-col transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${className}`}
     >
-      <div className="relative w-full h-32 mb-2 cursor-pointer sm:h-48">
-        {" "}
-        {/* Ajustado a altura inicial para mobile */}
+      <div className="relative sm:w-72 h-48 mb-2 cursor-pointer">
         <Link
           href={`/produtos/${product.id}`}
           className="absolute inset-0 z-10"
@@ -111,19 +79,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
       </div>
       <h3 className="text-lg font-semibold mb-2">{product.nome}</h3>
       <p className="text-gray-600 mb-2">R$ {product.preco.toFixed(2)}</p>
-      <div className="mt-2 flex gap-2">
-        <Button
-          onClick={handleWhatsAppClick}
-          className="w-1/2 bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-3 rounded text-sm flex items-center justify-center"
-        >
-          <FaWhatsapp className="mr-1 w-4 h-4" /> WhatsApp
-        </Button>
-        <Button
-          onClick={handleAddToCartClick}
-          className="w-1/2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-2 rounded text-sm flex items-center justify-center"
-        >
-          <ShoppingCart className="mr-2 w-4 h-4" /> Carrinho
-        </Button>
+      <div className=" flex justify-center items-center">
+        <Link href={`/produtos/${product.id}`}>
+          <Button className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded text-sm flex items-center justify-center transition-transform duration-200 transform hover:scale-105  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:shadow-blue-500/50 cursor-pointer">
+            <Brush className="mr-2 w-4 h-4" /> Ver detalhes
+          </Button>
+        </Link>
       </div>
     </div>
   );
