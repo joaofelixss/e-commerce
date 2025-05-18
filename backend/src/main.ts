@@ -5,13 +5,14 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
-    // ⚠️ CORS configurado corretamente para a Vercel
     app.enableCors({
       origin: [
-        'http://localhost:3000', // Para desenvolvimento local
-        'https://e-commerce-frontend.vercel.app', // Substitua pela URL real do seu frontend
+        'http://localhost:3000',
+        'https://e-commerce-two-beta-36.vercel.app',
       ],
-      credentials: true, // Deixe true por padrão caso use cookies futuramente
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
     });
 
     await app.listen(3000);
