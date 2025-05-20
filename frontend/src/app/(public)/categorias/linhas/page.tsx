@@ -1,12 +1,12 @@
-// src/app/(public)/roupas/page.tsx
+// src/app/(public)/linhas/page.tsx
 import React from "react";
 import CategoryProductListPage from "@/features/produtos/components/CategoryProductListPage";
 
-export default function RoupasPage() {
+export default function LinhasPage() {
   return (
     <CategoryProductListPage
-      category="roupas"
-      pageTitle="Roupas"
+      category="linhas"
+      pageTitle="Linhas"
       emptyMessage="Nenhum produto de roupa encontrado."
     />
   );

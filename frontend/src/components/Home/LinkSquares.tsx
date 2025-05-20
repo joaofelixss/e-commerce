@@ -53,7 +53,7 @@ const LinkSquares = () => {
           className="transition-transform duration-300 hover:scale-105"
         >
           <Image
-            src="/images/roupas.png"
+            src="/images/linhas.png"
             alt="Novidades"
             width={isDesktop ? 300 : 150}
             height={isDesktop ? 300 : 150}

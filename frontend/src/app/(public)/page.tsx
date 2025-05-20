@@ -1,7 +1,7 @@
 // src/app/(publi)/page.tsx
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import BannerCarousel from "@/components/Home/BannerCarousel";
 import InfoCarousel from "@/components/Home/InfoCarousel";
@@ -14,13 +14,19 @@ import { getAllProducts } from "@/api/products";
 import { motion } from "framer-motion";
 import { Banner } from "@/types/banner";
 import { Product } from "@/features/produtos/types/product";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const HomePage = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const [destaques, setDestaques] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchDestaques = async () => {
@@ -59,7 +65,7 @@ const HomePage = () => {
   const banners: Banner[] = [
     { id: 1, img: "/images/banner-1.png", link: "/produtos" },
     { id: 2, img: "/images/banner-2.png", link: "/produtos" },
-    { id: 3, img: "/images/banner-3.png", link: "/produtos/4" },
+    { id: 3, img: "/images/rosa.jpeg", link: "/produtos/4" },
   ];
   const infoItems = [
     {
@@ -122,73 +128,76 @@ const HomePage = () => {
       animate="visible"
     >
       <motion.div variants={itemVariants}>
-        <BannerCarousel banners={banners} />
-      </motion.div>
-      <motion.div variants={itemVariants}>
         <InfoCarousel items={infoItems} />
       </motion.div>
       <motion.div variants={itemVariants}>
         <LinkSquares />
       </motion.div>
+
       {/* Seção Nossos Destaques */}
       <section className="p-9 mt-12 bg-foreground">
         <motion.h2
           variants={itemVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
           className="text-5xl font-bold p-8 text-center text-background"
         >
           Nossos Destaques
         </motion.h2>
-        {isMobile ? (
-          <motion.div
-            ref={carouselRef}
-            className="overflow-x-auto md:overflow-x-hidden whitespace-nowrap scroll-smooth snap-x snap-mandatory -ml-4 pl-4"
-            variants={containerVariants}
+
+        {destaques.length > 0 ? (
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            // Adicionamos a propriedade 'spacing' para controlar o espaço entre os itens
+            // 'md:spacing-8' significa que em telas médias (md) e maiores, o espaçamento será de 2rem (32px)
+            // Você pode ajustar 'spacing-4' para o espaçamento padrão em telas menores
+            className="w-full max-w-sm mx-auto md:max-w-4xl lg:max-w-6xl"
           >
-            {destaques.length > 0 ? (
-              destaques.map((produto) => (
-                <motion.div
+            <CarouselContent className="-ml-4 md:-ml-8">
+              {" "}
+              {/* Ajuste o ml para compensar o padding/spacing dos itens */}
+              {destaques.map((produto) => (
+                <CarouselItem
                   key={produto.id}
-                  className="inline-block w-64 mr-4 snap-start"
-                  variants={itemVariants}
+                  // Definimos 'basis-full' para telas pequenas (1 item por vez)
+                  // 'sm:basis-1/2' para 2 itens em telas pequenas
+                  // 'md:basis-1/3' para 3 itens em telas médias e maiores
+                  className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3"
                 >
-                  <ProductCard product={produto} />
-                </motion.div>
-              ))
-            ) : (
-              <motion.p
-                variants={itemVariants}
-                className="text-gray-500 text-center py-4"
-              >
-                Nenhum destaque no momento.
-              </motion.p>
-            )}
-          </motion.div>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.5 }}
+                    className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] flex flex-col items-center"
+                  >
+                    <ProductCard product={produto} />
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         ) : (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-            variants={containerVariants}
+          <motion.p
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            className="text-gray-500 text-center py-4 text-background"
           >
-            {destaques.length > 0 ? (
-              destaques.map((produto) => (
-                <motion.div
-                  key={produto.id}
-                  className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] flex flex-col items-center"
-                  variants={itemVariants}
-                >
-                  <ProductCard product={produto} />
-                </motion.div>
-              ))
-            ) : (
-              <motion.p
-                variants={itemVariants}
-                className="text-gray-500 text-center py-4 col-span-full"
-              >
-                Nenhum destaque no momento.
-              </motion.p>
-            )}
-          </motion.div>
+            Nenhum destaque no momento.
+          </motion.p>
         )}
       </section>
+      <motion.div variants={itemVariants}>
+        <BannerCarousel banners={banners} />
+      </motion.div>
       <motion.div variants={itemVariants}>
         <Toaster />
       </motion.div>
