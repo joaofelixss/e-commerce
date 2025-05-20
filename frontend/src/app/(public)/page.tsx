@@ -189,7 +189,7 @@ const HomePage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
-            className="text-gray-500 text-center py-4 text-background"
+            className=" text-center py-4 text-background"
           >
             Nenhum destaque no momento.
           </motion.p>

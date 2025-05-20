@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_LOCAL = "http://localhost:3000";
 
 // Defina as interfaces com base na sua API Nest.js
 interface ProdutoVenda {

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MenuIcon } from "lucide-react"; // Ícone de hamburger
-import { Button } from "@/components/ui/button"; // Botão para o ícone
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area"; // Para rolagem no sheet
+import { ScrollArea } from "@/components/ui/scroll-area"; 
 import {
   Accordion, // Para submenus no mobile
   AccordionContent,
@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// --- Interfaces para os Itens do Menu ---
 interface MenuItem {
   title: string;
   url: string;
@@ -39,73 +38,72 @@ interface MenuItem {
   submenu?: { title: string; url: string }[];
 }
 
-// --- Dados dos Itens do Menu (copiado do seu código, ajustado para /admin/) ---
 const menuItems: MenuItem[] = [
   {
     title: "Dashboard",
-    url: "/admin/dashboard",
+    url: " /dashboard",
     icon: BarChartIcon,
   },
   {
     title: "Produtos",
-    url: "/admin/gerenciar-produtos",
+    url: " /gerenciar-produtos",
     icon: PackageIcon,
     submenu: [
-      { title: "Todos os Produtos", url: "/admin/gerenciar-produtos" },
+      { title: "Todos os Produtos", url: " /gerenciar-produtos" },
       {
         title: "Adicionar Produto",
-        url: "/admin/gerenciar-produtos/adicionar",
+        url: " /gerenciar-produtos/adicionar",
       },
     ],
   },
   {
     title: "Pedidos",
-    url: "/admin/pedidos",
+    url: " /pedidos",
     icon: ListChecksIcon,
     submenu: [
-      { title: "Todos os Pedidos", url: "/admin/pedidos" },
-      { title: "Novo Pedido", url: "/admin/pedidos/novo" },
+      { title: "Todos os Pedidos", url: " /pedidos" },
+      { title: "Novo Pedido", url: " /pedidos/novo" },
     ],
   },
   {
     title: "Estoque",
-    url: "/admin/estoque",
+    url: " /estoque",
     icon: PackageIcon,
     submenu: [
-      { title: "Visão Geral", url: "/admin/estoque" },
-      { title: "Inventário", url: "/admin/estoque/inventario" },
+      { title: "Visão Geral", url: " /estoque" },
+      { title: "Inventário", url: " /estoque/inventario" },
     ],
   },
   {
     title: "Clientes",
-    url: "/admin/clientes",
+    url: " /clientes",
     icon: UsersIcon,
     submenu: [
-      { title: "Lista de Clientes", url: "/admin/clientes" },
-      { title: "Adicionar Cliente", url: "/admin/clientes/adicionar" },
+      { title: "Lista de Clientes", url: " /clientes" },
+      { title: "Adicionar Cliente", url: " /clientes/adicionar" },
     ],
   },
   {
     title: "Vendas",
-    url: "/admin/vendas",
+    url: " /vendas",
     icon: ShoppingCartIcon,
     submenu: [
-      { title: "Vendas Realizadas", url: "/admin/vendas" },
-      { title: "Adicionar Venda", url: "/admin/vendas/adicionar" },
+      { title: "Vendas Realizadas", url: " /vendas" },
+      { title: "Adicionar Venda", url: " /vendas/adicionar" },
     ],
   },
   {
     title: "Categorias",
-    url: "/admin/categorias",
+    url: " /categorias",
     icon: TagIcon,
     submenu: [
-      { title: "Todas as Categorias", url: "/admin/categorias" },
-      { title: "Adicionar Categoria", url: "/admin/categorias/adicionar" },
+      { title: "Todas as Categorias", url: " /categorias" },
+      { title: "Adicionar Categoria", url: " /categorias/adicionar" },
     ],
   },
   {
     title: "Configurações",
-    url: "/admin/user/config",
+    url: " /user/config",
     icon: SettingsIcon,
   },
 ];
@@ -113,12 +111,12 @@ const menuItems: MenuItem[] = [
 const documentsData: MenuItem[] = [
   {
     title: "Relatórios",
-    url: "/admin/relatorios",
+    url: " /relatorios",
     icon: ChartPieIcon,
     submenu: [
-      { title: "Visão Geral", url: "/admin/relatorios" },
-      { title: "Relatório de Vendas", url: "/admin/relatorios/vendas" },
-      { title: "Relatório de Estoque", url: "/admin/relatorios/estoque" },
+      { title: "Visão Geral", url: " /relatorios" },
+      { title: "Relatório de Vendas", url: " /relatorios/vendas" },
+      { title: "Relatório de Estoque", url: " /relatorios/estoque" },
     ],
   },
 ];
@@ -167,11 +165,11 @@ const AdminMobileNav: React.FC = () => {
                             <Link
                               key={subItem.title}
                               href={subItem.url}
-                              onClick={() => setIsOpen(false)} // Fecha a Sheet ao clicar
+                              onClick={() => setIsOpen(false)} 
                               className={cn(
                                 "block py-2 text-base text-muted-foreground transition-colors hover:text-foreground",
                                 pathname === subItem.url &&
-                                  "font-semibold text-primary" // Estilo para link ativo
+                                  "font-semibold text-primary" 
                               )}
                             >
                               {subItem.title}
@@ -184,13 +182,13 @@ const AdminMobileNav: React.FC = () => {
                 ) : (
                   <Link
                     href={item.url}
-                    onClick={() => setIsOpen(false)} // Fecha a Sheet ao clicar
+                    onClick={() => setIsOpen(false)} 
                     className={cn(
                       "flex items-center text-lg font-semibold transition-colors hover:text-foreground",
-                      pathname === item.url && "text-primary", // Estilo para link ativo
-                      item.url.startsWith("/admin/user")
+                      pathname === item.url && "text-primary", 
+                      item.url.startsWith(" /user")
                         ? "pt-4 border-t border-border"
-                        : "" // Exemplo de separação para Configurações
+                        : "" 
                     )}
                   >
                     {item.icon && <item.icon className="mr-3 h-5 w-5" />}
@@ -201,8 +199,6 @@ const AdminMobileNav: React.FC = () => {
             ))}
           </div>
         </ScrollArea>
-        {/* Aqui você pode adicionar um footer para o Sheet, como o dropdown de usuário */}
-        {/* Por simplicidade, não incluí o dropdown de usuário aqui, mas você pode adaptar */}
       </SheetContent>
     </Sheet>
   );

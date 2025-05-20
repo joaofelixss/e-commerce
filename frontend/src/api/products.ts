@@ -2,6 +2,7 @@
 import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:3000";
 
 export const getProductById = async (id: string | string[]) => {
   try {

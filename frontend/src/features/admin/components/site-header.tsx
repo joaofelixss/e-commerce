@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import AdminNavMenu from "./admin-nav-menu.tsx"; // Seu menu de desktop
-import AdminMobileNav from "./admin-mobile-nav"; // SEU NOVO MENU MOBILE
+import AdminNavMenu from "./admin-nav-menu.tsx";
+import AdminMobileNav from "./admin-mobile-nav";
 import { UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -15,46 +15,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 
-// Mock de usuário para o dropdown
 const mockUser = {
   name: "Usuário Admin",
-  imageUrl: "", // Adicione a URL da imagem se houver
+  imageUrl: "",
   email: "admin@example.com",
 };
 
-// SiteHeader
 export function SiteHeader() {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken"); // Ou seu método de logout
+    localStorage.removeItem("accessToken");
     router.push("/login");
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className="flex justify-center items-center sticky top-0 w-full border-b">
       <div className="container flex h-16 items-center justify-between space-x-4 sm:space-x-0">
-        {/* Ícone de Hamburger para Mobile */}
-        <div className="flex md:hidden">
-          {" "}
-          {/* Visível apenas em mobile */}
+        <div className="flex md:hidden items-center">
           <AdminMobileNav />
         </div>
 
-        {/* Logo ou Título do Admin (Visível em todas as telas) */}
-        <Link href="/admin/dashboard" className="flex items-center space-x-2">
-          {/* Você pode colocar sua imagem de logo aqui */}
+        <Link href="/dashboard" className="flex items-center space-x-2">
           <span className="font-bold text-lg">Painel Admin</span>
         </Link>
 
-        {/* Navigation Menu (Visível apenas em desktop) */}
         <div className="hidden md:flex flex-1 justify-center">
-          {" "}
-          {/* Esconde em mobile, mostra em desktop */}
           <AdminNavMenu />
         </div>
 
-        {/* Espaço para ações do usuário (Dropdown, sempre visível) */}
         <div className="flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -68,6 +57,7 @@ export function SiteHeader() {
                 )}
               </Avatar>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end" className="w-48">
               <div className="px-4 py-2">
                 <div className="font-medium">{mockUser.name}</div>
@@ -77,10 +67,10 @@ export function SiteHeader() {
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/admin/user/profile">Perfil</Link>
+                <Link href="/user/profile">Perfil</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/admin/user/settings">Configurações</Link>
+                <Link href="/user/settings">Configurações</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

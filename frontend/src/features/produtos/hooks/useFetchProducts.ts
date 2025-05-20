@@ -4,6 +4,7 @@ import axios from "axios";
 import { Product } from "@/features/produtos/types/product"; // Importe a interface Product
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:3000";
 
 export const useFetchProducts = (categoria?: string | null) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -15,7 +16,7 @@ export const useFetchProducts = (categoria?: string | null) => {
       setLoading(true);
       setError(null); // Limpa o erro ao iniciar uma nova busca
       try {
-        let url = `${backendUrl}/produtos`;
+        let url = `${API_BASE_URL}/produtos`;
         if (categoria) {
           url += `?categoria=${categoria}`;
         }

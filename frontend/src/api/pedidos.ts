@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:3000";
 
 interface PedidoItem {
   produtoId: string;
