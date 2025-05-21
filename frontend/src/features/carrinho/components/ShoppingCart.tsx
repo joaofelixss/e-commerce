@@ -46,8 +46,8 @@ const ShoppingCart = () => {
   ) => {
     removeItemFromCart(
       itemId,
-      cor !== undefined && cor !== null ? cor : "", // Se cor for undefined ou null, passa uma string vazia
-      tamanho !== undefined && tamanho !== null ? tamanho : "" // Se tamanho for undefined ou null, passa uma string vazia
+      cor !== undefined && cor !== null ? cor : "",
+      tamanho !== undefined && tamanho !== null ? tamanho : ""
     );
     toast.error("Produto removido do carrinho!", {
       position: "top-right",
@@ -60,17 +60,22 @@ const ShoppingCart = () => {
     });
   };
 
-  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-    updateQuantity(itemId, newQuantity);
+  const handleUpdateQuantity = (
+    itemId: string,
+    newQuantity: number,
+    cor?: string | null | undefined,
+    tamanho?: string | null | undefined
+  ) => {
+    updateQuantity(
+      itemId,
+      newQuantity,
+      cor !== undefined && cor !== null ? cor : "",
+      tamanho !== undefined && tamanho !== null ? tamanho : ""
+    );
     if (newQuantity > 1) {
       toast.success("Quantidade do produto atualizada!", {
         position: "top-right",
         autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
       });
     }
   };
@@ -169,13 +174,16 @@ const ShoppingCart = () => {
                     onClick={() =>
                       handleUpdateQuantity(
                         item.id,
-                        item.quantidade > 1 ? item.quantidade - 1 : 1
+                        item.quantidade - 1,
+                        item.cor,
+                        item.tamanho
                       )
                     }
                     className="rounded-full"
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
+
                   <Input
                     type="number"
                     min="1"
@@ -183,16 +191,24 @@ const ShoppingCart = () => {
                     onChange={(e) =>
                       handleUpdateQuantity(
                         item.id,
-                        parseInt(e.target.value, 10)
+                        parseInt(e.target.value, 10),
+                        item.cor,
+                        item.tamanho
                       )
                     }
                     className="w-16 text-center"
                   />
+
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={() =>
-                      handleUpdateQuantity(item.id, item.quantidade + 1)
+                      handleUpdateQuantity(
+                        item.id,
+                        item.quantidade + 1,
+                        item.cor,
+                        item.tamanho
+                      )
                     }
                     className="rounded-full"
                   >

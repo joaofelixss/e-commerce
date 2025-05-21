@@ -11,7 +11,7 @@ import {
   getTotalRevenue,
   getOrderCounts,
   getLowStockCount,
-} from "@/features/admin/dashboard/api/dashboard"; // Importe as funções da API
+} from "@/features/admin/dashboard/api/dashboard";
 
 interface DashboardStatusCardProps {
   title: string;
@@ -53,34 +53,28 @@ const DashboardStatusCards = () => {
   const [lowStockItems, setLowStockItems] = useState<number | string>(
     "Carregando..."
   );
-  const [loadingData, setLoadingData] = useState(true); 
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-
-    if (token) {
-      setLoadingData(true); 
-      Promise.all([getTotalRevenue(), getOrderCounts(), getLowStockCount()])
-        .then(([revenue, counts, lowStock]) => {
-          setTotalRevenue(`R$ ${revenue.toFixed(2)}`);
-          setTotalOrders(counts.pending + counts.completed + counts.cancelled);
-          setPendingOrders(counts.pending);
-          setCompletedOrders(counts.completed);
-          setLowStockItems(lowStock);
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar dados do dashboard:", error);
-        })
-        .finally(() => {
-          setLoadingData(false); 
-        });
-    } else {
-      console.warn("Token de acesso não encontrado no DashboardStatusCards.");
-    }
+    setLoadingData(true);
+    Promise.all([getTotalRevenue(), getOrderCounts(), getLowStockCount()])
+      .then(([revenue, counts, lowStock]) => {
+        setTotalRevenue(`R$ ${revenue.toFixed(2)}`);
+        setTotalOrders(counts.pending + counts.completed + counts.cancelled);
+        setPendingOrders(counts.pending);
+        setCompletedOrders(counts.completed);
+        setLowStockItems(lowStock);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar dados do dashboard:", error);
+      })
+      .finally(() => {
+        setLoadingData(false);
+      });
   }, []);
 
   if (loadingData) {
-    return <div>Carregando dados do dashboard...</div>; // Mensagem de carregamento enquanto os dados são buscados
+    return <div>Carregando dados do dashboard...</div>;
   }
 
   return (

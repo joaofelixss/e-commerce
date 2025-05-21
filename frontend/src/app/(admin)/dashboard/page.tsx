@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import DashboardStatusCards from "@/features/admin/dashboard/components/DashboardStatusCards";
 import DashboardNavigationLinks from "@/features/admin/dashboard/components/DashboardNavigationLinks";
 import RecentOrdersTable from "@/features/admin/dashboard/components/RecentOrdersTable";
@@ -23,7 +22,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const DashboardPage = () => {
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [salesData, setSalesData] = useState<
@@ -32,26 +30,20 @@ const DashboardPage = () => {
   const [loadingSalesData, setLoadingSalesData] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-
-    if (token) {
-      setIsLoggedIn(true);
-      setLoadingSalesData(true);
-      getSalesPerformance()
-        .then((data) => {
-          setSalesData(data);
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar dados de desempenho de vendas:", error);
-        })
-        .finally(() => {
-          setLoadingSalesData(false);
-        });
-    } else {
-      router.push("/login");
-    }
+    setIsLoggedIn(true);
+    setLoadingSalesData(true);
+    getSalesPerformance()
+      .then((data) => {
+        setSalesData(data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar dados de desempenho de vendas:", error);
+      })
+      .finally(() => {
+        setLoadingSalesData(false);
+      });
     setLoadingAuth(false);
-  }, [router]);
+  }, []);
 
   if (loadingAuth) {
     return <div>Verificando autenticação...</div>;
@@ -121,7 +113,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="mt-8">
-        <LowStockAlerts />{" "}
+        <LowStockAlerts />
       </div>
     </div>
   );

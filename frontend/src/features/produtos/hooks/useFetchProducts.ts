@@ -16,7 +16,7 @@ export const useFetchProducts = (categoria?: string | null) => {
       setLoading(true);
       setError(null); // Limpa o erro ao iniciar uma nova busca
       try {
-        let url = `${API_BASE_URL}/produtos`;
+        let url = `${backendUrl}/produtos`;
         if (categoria) {
           url += `?categoria=${categoria}`;
         }
