@@ -9,6 +9,13 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
+interface PublicUser {
+  id: string;
+  nome: string;
+  email: string;
+  role: string;
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -18,10 +25,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto) {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ token: string; user: PublicUser }> {
     const { email, senha } = loginDto;
+
     this.logger.log(`Tentativa de login para o email: ${email}`);
-    this.logger.log(`Senha recebida do DTO: ${senha}`); // Log da senha recebida
+    this.logger.log(`Senha recebida do DTO: ${senha}`);
+
     const usuario = await this.prisma.usuario.findUnique({ where: { email } });
 
     if (!usuario) {
@@ -30,25 +41,16 @@ export class AuthService {
     }
 
     this.logger.log(`Usuário encontrado: ${usuario.email}`);
-    this.logger.log(
-      `Senha hashizada do usuário (antes da verificação): ${usuario.senha}`,
-    ); // Log ANTES da verificação
+    this.logger.log(`Senha hashizada do usuário: ${usuario.senha}`);
 
-    // Adicionando verificação para garantir que a propriedade 'senha' existe e não é nula
     if (!usuario.senha) {
-      this.logger.error(
-        `Usuário encontrado, mas a senha está ausente ou nula para o email: ${email}`,
-      );
+      this.logger.error(`Senha ausente para o email: ${email}`);
       throw new InternalServerErrorException(
         'Erro interno: Senha do usuário ausente',
       );
     }
 
-    this.logger.log(
-      `Senha hashizada do usuário (depois da verificação): ${usuario.senha}`,
-    ); // Log DEPOIS da verificação
-
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha); // Linha 32
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
     this.logger.log(`Resultado da comparação de senha: ${senhaCorreta}`);
 
     if (!senhaCorreta) {
@@ -61,11 +63,21 @@ export class AuthService {
       username: usuario.nome,
       role: usuario.role,
     };
+
     this.logger.log(`Payload do JWT: ${JSON.stringify(payload)}`);
+
     try {
-      const accessToken = await this.jwtService.signAsync(payload);
+      const token = await this.jwtService.signAsync(payload);
       this.logger.log(`Token JWT gerado com sucesso.`);
-      return { access_token: accessToken };
+
+      const user: PublicUser = {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        role: usuario.role,
+      };
+
+      return { token, user };
     } catch (error) {
       this.logger.error(`Erro ao gerar o token JWT:`, error);
       throw new InternalServerErrorException('Erro ao gerar o token');
