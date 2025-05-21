@@ -11,7 +11,10 @@ export const addCategory = async (newCategoryData: {
   try {
     const response = await axios.post(
       `${backendUrl}/categorias`,
-      newCategoryData
+      newCategoryData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados da categoria criada (opcional)
   } catch (error: unknown) {
@@ -22,7 +25,9 @@ export const addCategory = async (newCategoryData: {
 
 export const getCategory = async (id: string) => {
   try {
-    const response = await axios.get(`${backendUrl}/categorias/${id}`);
+    const response = await axios.get(`${backendUrl}/categorias/${id}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     console.error(`Erro ao buscar categoria com ID ${id}:`, error);
@@ -41,7 +46,10 @@ export const updateCategory = async (
   try {
     const response = await axios.patch(
       `${backendUrl}/categorias/${id}`,
-      updatedCategoryData
+      updatedCategoryData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados da categoria atualizada (opcional)
   } catch (error: unknown) {
@@ -52,7 +60,9 @@ export const updateCategory = async (
 
 export const deleteCategory = async (id: string) => {
   try {
-    const response = await axios.delete(`${backendUrl}/categorias/${id}`);
+    const response = await axios.delete(`${backendUrl}/categorias/${id}`, {
+      withCredentials: true,
+    });
     return response.data; // Opcional: pode retornar dados sobre a exclusão
   } catch (error: unknown) {
     console.error(`Erro ao deletar categoria com ID ${id}:`, error);
@@ -62,7 +72,9 @@ export const deleteCategory = async (id: string) => {
 
 export const getAllCategories = async () => {
   try {
-    const response = await axios.get(`${backendUrl}/categorias`);
+    const response = await axios.get(`${backendUrl}/categorias`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao carregar todas as categorias:", error);

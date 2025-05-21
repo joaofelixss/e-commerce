@@ -7,7 +7,10 @@ const API_BASE_URL = "http://localhost:3000";
 export const getVariablesByProductId = async (productId: string | string[]) => {
   try {
     const response = await axios.get(
-      `${backendUrl}/produtos/${productId}/variacoes` // Use a rota correta para variações
+      `${backendUrl}/produtos/${productId}/variacoes`,
+      {
+        withCredentials: true,
+      } // Use a rota correta para variações
     );
     return response.data;
   } catch (error: unknown) {
@@ -33,7 +36,10 @@ export const addVariable = async (
   try {
     const response = await axios.post(
       `${backendUrl}/produtos/${productId}/variacoes`, // Use a rota correta para variações
-      newVariableData
+      newVariableData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados da variação criada
   } catch (error: unknown) {
@@ -60,7 +66,10 @@ export const updateVariable = async (
   try {
     const response = await axios.patch(
       `${backendUrl}/produtos/${productId}/variacoes/${variableId}`, // Use a rota correta para variações
-      updatedVariableData
+      updatedVariableData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados da variação atualizada
   } catch (error: unknown) {
@@ -78,7 +87,10 @@ export const deleteVariable = async (
 ) => {
   try {
     const response = await axios.delete(
-      `${backendUrl}/produtos/${productId}/variacoes/${variableId}` // Use a rota correta para variações
+      `${backendUrl}/produtos/${productId}/variacoes/${variableId}`,
+      {
+        withCredentials: true,
+      } // Use a rota correta para variações
     );
     return response.data; // Opcional: pode retornar dados sobre a exclusão
   } catch (error: unknown) {

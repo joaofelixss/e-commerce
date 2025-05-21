@@ -3,17 +3,11 @@ import axios from "axios";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 const API_LOCAL = "http://localhost:3000";
 
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  console.log("Token lido do localStorage:", token);
-  return token;
-};
-
+// Faturamento total
 export const getTotalRevenue = async (): Promise<number> => {
-  const token = getToken();
   try {
     const response = await axios.get(`${backendUrl}/dashboard/revenue`, {
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
     });
     return response.data;
   } catch (error: unknown) {
@@ -22,15 +16,15 @@ export const getTotalRevenue = async (): Promise<number> => {
   }
 };
 
+// Contagem de pedidos
 export const getOrderCounts = async (): Promise<{
   pending: number;
   completed: number;
   cancelled: number;
 }> => {
-  const token = getToken();
   try {
     const response = await axios.get(`${backendUrl}/dashboard/orders`, {
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
     });
     return response.data;
   } catch (error: unknown) {
@@ -39,11 +33,11 @@ export const getOrderCounts = async (): Promise<{
   }
 };
 
+// Produtos com baixo estoque (apenas contagem)
 export const getLowStockCount = async (): Promise<number> => {
-  const token = getToken();
   try {
     const response = await axios.get(`${backendUrl}/dashboard/low-stock`, {
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
     });
     return response.data;
   } catch (error: unknown) {
@@ -52,16 +46,15 @@ export const getLowStockCount = async (): Promise<number> => {
   }
 };
 
-// Nova função para buscar os dados de desempenho de vendas
+// Desempenho de vendas (gráfico)
 export const getSalesPerformance = async (): Promise<
   { name: string; Vendas: number }[]
 > => {
-  const token = getToken();
   try {
     const response = await axios.get(
       `${backendUrl}/dashboard/sales-performance`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -71,6 +64,7 @@ export const getSalesPerformance = async (): Promise<
   }
 };
 
+// Pedidos recentes (para dashboard)
 export const getRecentOrders = async (
   limit: number = 5
 ): Promise<
@@ -82,12 +76,11 @@ export const getRecentOrders = async (
     total: number;
   }[]
 > => {
-  const token = getToken();
   try {
     const response = await axios.get(
       `${backendUrl}/dashboard/recent-orders?limit=${limit}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -97,14 +90,13 @@ export const getRecentOrders = async (
   }
 };
 
+// Produtos com baixo estoque (detalhes)
 export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
-  const token = getToken();
   try {
     const response = await axios.get(
       `${backendUrl}/dashboard/low-stock-products`,
       {
-        // Nova rota no backend
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -114,6 +106,40 @@ export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
   }
 };
 
+// Listar todos os pedidos
+export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
+  try {
+    const response = await axios.get(`${backendUrl}/pedidos`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao buscar todos os pedidos:", error);
+    throw error;
+  }
+};
+
+// Atualizar status do pedido
+export const updateOrderStatus = async (
+  orderId: string,
+  newStatus: "pendente" | "concluído" | "cancelado"
+): Promise<void> => {
+  try {
+    await axios.patch(
+      `${backendUrl}/pedidos/${orderId}`,
+      { status: newStatus },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
+  } catch (error: unknown) {
+    console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
+    throw error;
+  }
+};
+
+// Interfaces
 interface LowStockProduct {
   id: string;
   nome: string;
@@ -122,21 +148,6 @@ interface LowStockProduct {
   nivelMinimo?: number;
 }
 
-export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
-  const token = getToken();
-  try {
-    const response = await axios.get(`${backendUrl}/pedidos`, {
-      // Use o endpoint /pedidos
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data; // A resposta agora tem a propriedade 'pedidos'
-  } catch (error: unknown) {
-    console.error("Erro ao buscar todos os pedidos:", error);
-    throw error;
-  }
-};
-
-// Defina a interface para um Pedido (para a listagem)
 interface OrderListItem {
   id: string;
   cliente: { nome: string; email: string };
@@ -158,50 +169,3 @@ interface OrderListItem {
     quantidade: number;
   }[];
 }
-
-// Defina a interface para os detalhes do pedido (para o modal)
-interface OrderDetail {
-  id: string;
-  cliente: { nome: string; email: string };
-  criadoEm: Date;
-  status: string;
-  total: number;
-  enderecoEntrega: {
-    cep: string;
-    rua: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    numero: string;
-    complemento: string | null;
-  } | null;
-  produtos: {
-    produtoId: string;
-    preco: number;
-    quantidade: number;
-    name?: string; // Podemos tentar buscar o nome depois, se necessário
-  }[];
-}
-
-// Função para atualizar o status do pedido
-export const updateOrderStatus = async (
-  orderId: string,
-  newStatus: "pendente" | "concluído" | "cancelado"
-): Promise<void> => {
-  const token = getToken();
-  try {
-    const response = await axios.patch(
-      // Ou axios.patch, dependendo da sua API
-      `${backendUrl}/pedidos/${orderId}`, // Endpoint para atualizar o pedido
-      { status: newStatus }, // Envia o novo status no corpo da requisição
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    // Se a requisição for bem-sucedida, a API geralmente retorna um status 200 ou 204
-    console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
-  } catch (error: unknown) {
-    console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
-    throw error;
-  }
-};

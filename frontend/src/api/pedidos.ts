@@ -55,7 +55,10 @@ export const createPedido = async (
   try {
     const response = await axios.post<CreatePedidoResponse>(
       `${backendUrl}/pedidos/checkout`,
-      pedidoData
+      pedidoData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data;
   } catch (error: unknown) {

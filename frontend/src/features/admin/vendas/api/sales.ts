@@ -37,13 +37,13 @@ interface ItemVenda {
   custoUnitario?: number;
   subtotal: number;
   lucroItem?: number;
-  produto: Produto; 
-  variacao?: Variacao; 
+  produto: Produto;
+  variacao?: Variacao;
 }
 
 export interface Order {
   id: string;
-  produtos: unknown; 
+  produtos: unknown;
   status: string;
   total: number;
   criadoEm: string;
@@ -53,7 +53,7 @@ export interface Order {
   formaPagamento?: string;
   observacoes?: string;
   enderecoEntrega?: unknown;
-  venda?: Venda; 
+  venda?: Venda;
 }
 
 interface Cliente {
@@ -96,7 +96,9 @@ interface AddManualSalePayload {
 
 export const getOrders = async (): Promise<Order[]> => {
   try {
-    const response = await axios.get<Order[]>(`${backendUrl}/pedidos`); // Ajuste o endpoint se necessário
+    const response = await axios.get<Order[]>(`${backendUrl}/pedidos`, {
+      withCredentials: true,
+    }); // Ajuste o endpoint se necessário
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao buscar pedidos:", error);
@@ -106,7 +108,9 @@ export const getOrders = async (): Promise<Order[]> => {
 
 export const getSales = async (): Promise<Venda[]> => {
   try {
-    const response = await axios.get<Venda[]>(`${backendUrl}/vendas`); // Endpoint para buscar todas as vendas
+    const response = await axios.get<Venda[]>(`${backendUrl}/vendas`, {
+      withCredentials: true,
+    }); // Endpoint para buscar todas as vendas
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao buscar vendas:", error);
@@ -120,7 +124,10 @@ export const addManualSale = async (
   try {
     const response = await axios.post<Venda>(
       `${backendUrl}/vendas`, // Endpoint para criar vendas (manuais ou a partir de pedidos)
-      payload
+      payload,
+      {
+        withCredentials: true,
+      }
     );
     return response.data;
   } catch (error: unknown) {

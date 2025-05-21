@@ -13,7 +13,10 @@ export const addProduct = async (newProductData: {
   try {
     const response = await axios.post(
       `${backendUrl}/produtos`,
-      newProductData
+      newProductData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados do produto criado (opcional)
   } catch (error: unknown) {
@@ -24,7 +27,9 @@ export const addProduct = async (newProductData: {
 
 export const getProduct = async (id: string) => {
   try {
-    const response = await axios.get(`${backendUrl}/produtos/${id}`);
+    const response = await axios.get(`${backendUrl}/produtos/${id}`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     console.error(`Erro ao buscar produto com ID ${id}:`, error);
@@ -45,7 +50,10 @@ export const updateProduct = async (
   try {
     const response = await axios.patch(
       `${backendUrl}/produtos/${id}`,
-      updatedProductData
+      updatedProductData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data; // Retorna os dados do produto atualizado (opcional)
   } catch (error: unknown) {
@@ -56,11 +64,12 @@ export const updateProduct = async (
 
 export const deleteProduct = async (id: string) => {
   try {
-    const response = await axios.delete(`${backendUrl}/produtos/${id}`);
+    const response = await axios.delete(`${backendUrl}/produtos/${id}`, {
+      withCredentials: true,
+    });
     return response.data; // Opcional: pode retornar dados sobre a exclusão
   } catch (error: unknown) {
     console.error(`Erro ao deletar produto com ID ${id}:`, error);
     throw error; // Rejogue o erro para quem chamar esta função
   }
 };
-

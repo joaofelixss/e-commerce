@@ -4,12 +4,6 @@ import axios from "axios";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 const API_LOCAL = "http://localhost:3000";
 
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  console.log("Token lido do localStorage:", token);
-  return token;
-};
-
 interface Cliente {
   id: string;
   nome: string;
@@ -34,14 +28,11 @@ interface PaginatedResponse<T> {
 }
 
 export const getClientes = async (): Promise<Cliente[]> => {
-  const token = getToken();
   try {
     const response = await axios.get<PaginatedResponse<Cliente>>(
       `${backendUrl}/clientes`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        withCredentials: true,
       }
     );
     return response.data.data; // Acessamos a propriedade 'data' para obter o array de clientes
@@ -52,17 +43,10 @@ export const getClientes = async (): Promise<Cliente[]> => {
 };
 
 export const addCliente = async (data: ClienteFormData): Promise<Cliente> => {
-  const token = getToken();
   try {
-    const response = await axios.post<Cliente>(
-      `${backendUrl}/clientes`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.post<Cliente>(`${backendUrl}/clientes`, data, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     console.error("Erro ao adicionar cliente:", error);
@@ -74,15 +58,12 @@ export const updateCliente = async (
   id: string,
   data: ClienteFormData
 ): Promise<Cliente> => {
-  const token = getToken();
   try {
     const response = await axios.patch<Cliente>(
       `${backendUrl}/clientes/${id}`,
       data,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -93,12 +74,9 @@ export const updateCliente = async (
 };
 
 export const deleteCliente = async (id: string): Promise<void> => {
-  const token = getToken();
   try {
     await axios.delete(`${backendUrl}/clientes/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      withCredentials: true,
     });
     console.log(`Cliente com ID ${id} deletado com sucesso.`);
   } catch (error: unknown) {

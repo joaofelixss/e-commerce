@@ -3,12 +3,6 @@ import axios from "axios";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 const API_LOCAL = "http://localhost:3000";
 
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  console.log("Token lido do localStorage:", token);
-  return token;
-};
-
 interface StockItem {
   id: string;
   nome: string;
@@ -19,11 +13,9 @@ interface StockItem {
 }
 
 export const getStockLevels = async (): Promise<StockItem[]> => {
-  const token = getToken();
   try {
     const response = await axios.get(`${backendUrl}/estoque`, {
-      // Endpoint para buscar os níveis de estoque
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
     });
     return response.data; // Esperamos um array de objetos StockItem
   } catch (error: unknown) {
@@ -38,14 +30,13 @@ export const updateStockLevel = async (
   newQuantity: number,
   newMinLevel?: number | null
 ): Promise<void> => {
-  const token = getToken();
   try {
     const response = await axios.patch(
       // Ou axios.put, dependendo da sua API
       `${backendUrl}/estoque/${itemId}`, // Endpoint para atualizar o estoque do item (pode ser o ID da variação)
       { quantidade: newQuantity, nivelMinimo: newMinLevel }, // Envia os dados atualizados
       {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       }
     );
     // Se a requisição for bem-sucedida
@@ -62,6 +53,7 @@ export const gerarListaEstoque = async () => {
     const response = await fetch("/api/estoque/disponivel", {
       // Rota para o PDF
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/pdf", // O backend deve estar enviando este header
       },
@@ -86,13 +78,11 @@ export const gerarListaEstoque = async () => {
 
 // Nova função para buscar a lista de estoque para WhatsApp usando axios
 export const getEstoqueWhatsAppText = async (): Promise<string> => {
-  const token = getToken();
   try {
     const response = await axios.get(
       `${backendUrl}/estoque/disponivel/whatsapp`,
       {
-        headers: { Authorization: `Bearer ${token}` }, // Se a rota do WhatsApp também requer autenticação
-        responseType: "text", // Esperamos uma resposta de texto
+        withCredentials: true,
       }
     );
     return response.data;
