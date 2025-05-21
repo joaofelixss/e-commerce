@@ -1,63 +1,25 @@
-import React, { useState, useEffect } from "react";
+// src/features/checkout/components/CheckoutForm.tsx
+
+"use client";
+
+import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore, CartItem } from "@/features/produtos/store/cartStore";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
-import { FaWhatsapp } from "react-icons/fa";
 import WhatsappMessageGenerator from "@/features/checkout/components/WhatsappMessageGenerator";
 import { createPedido } from "@/api/pedidos";
-
-interface ViaCepResponse {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-}
-
-interface CreatePedidoData {
-  produtos: { produtoId: string; quantidade: number }[];
-  total: number;
-  enderecoEntrega: {
-    cep: string;
-    rua: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    numero: string;
-    complemento: string | null;
-  } | null;
-  cliente: {
-    nome: string;
-    telefone: string;
-    endereco: string | null;
-    numero: string | null;
-    complemento: string | null;
-    bairro: string | null;
-    cidade: string | null;
-    uf: string | null;
-    cep: string | null;
-  };
-  observacoes: string | null;
-  formaPagamento: "dinheiro" | "pix" | "cartao";
-}
+import {
+  CreatePedidoData,
+  ViaCepResponse,
+} from "@/features/checkout/types/checkout";
+import { DadosPessoaisForm } from "./form/DadosPessoaisForm";
+import { PagamentoForm } from "./form/PagamentoForm";
+import { ObservacoesForm } from "./form/ObservacoesForm";
+import { BotaoSubmit } from "./form/BotaoSubmit";
+import { EntregaForm } from "./form/EntregaForm";
 
 const CheckoutForm = () => {
   const cartItems = useCartStore((state) => state.items);
@@ -89,6 +51,8 @@ const CheckoutForm = () => {
 
   const totalCompra = totalPrice();
   const totalComFrete = desejaEntrega ? totalCompra + frete : totalCompra;
+
+  const [hasMounted, setHasMounted] = useState(false);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -129,9 +93,6 @@ const CheckoutForm = () => {
     setFormaPagamento(value);
   };
 
-  const [mostrarCamposEntregaDiferente, setMostrarCamposEntregaDiferente] =
-    React.useState(false);
-
   const buscarEnderecoPorCep = async (cep: string) => {
     if (!cep || cep.length !== 8) {
       toast.error("CEP inválido.");
@@ -150,7 +111,6 @@ const CheckoutForm = () => {
       }
       const data: ViaCepResponse = await response.json();
 
-      // Verifica se as propriedades essenciais de um endereço estão presentes
       if (
         data &&
         data.logradouro &&
@@ -163,7 +123,6 @@ const CheckoutForm = () => {
         setCidade(data.localidade);
         setUf(data.uf);
       } else {
-        // Se alguma propriedade essencial estiver faltando, considera o CEP como não encontrado
         toast.error("CEP não encontrado.");
         setEndereco("");
         setBairro("");
@@ -229,6 +188,12 @@ const CheckoutForm = () => {
 
     return isValid;
   };
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -298,7 +263,7 @@ const CheckoutForm = () => {
         const response = await createPedido(pedidoData);
         if (response.success) {
           toast.success("Pedido enviado com sucesso!");
-          window.open(whatsappUrl, "_blank"); // Abre a URL já com a mensagem codificada
+          window.open(whatsappUrl, "_blank");
           clearCart();
           router.push("/pedido-enviado");
         } else {
@@ -325,40 +290,20 @@ const CheckoutForm = () => {
       </CardTitle>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-1">
-            <Label htmlFor="name">Nome Completo:</Label>
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={handleNameChange}
-              required
-            />
-            {nameError && (
-              <p className="text-red-500 text-xs italic">{nameError}</p>
-            )}
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="phone">Telefone (com DDD):</Label>
-            <Input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={phone}
-              onChange={handlePhoneChange}
-              required
-            />
-            {phoneError && (
-              <p className="text-red-500 text-xs italic">{phoneError}</p>
-            )}
-          </div>
+          <DadosPessoaisForm
+            name={name}
+            phone={phone}
+            handleNameChange={handleNameChange}
+            handlePhoneChange={handlePhoneChange}
+            nameError={nameError}
+            phoneError={phoneError}
+          />
           <div className="flex items-center space-x-2">
             <Checkbox
               id="entregaDiferente"
-              checked={mostrarCamposEntregaDiferente}
+              checked={desejaEntrega}
               onCheckedChange={(checked) => {
-                setMostrarCamposEntregaDiferente(checked === true); // Garante que 'checked' seja convertido para boolean
+                setDesejaEntrega(checked === true); // Garante que 'checked' seja convertido para boolean
               }}
             />
             <Label
@@ -370,128 +315,35 @@ const CheckoutForm = () => {
           </div>
 
           {desejaEntrega && (
-            <div className="space-y-2">
-              <div className="space-y-2">
-                <Label htmlFor="cep">CEP:</Label>
-                <Input
-                  type="text"
-                  id="cep"
-                  name="cep"
-                  value={cep}
-                  onChange={handleCepChange}
-                  maxLength={8}
-                  required
-                />
-                {cepError && (
-                  <p className="text-red-500 text-xs italic">{cepError}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="endereco">Endereço:</Label>
-                <Input
-                  type="text"
-                  id="endereco"
-                  name="endereco"
-                  value={endereco}
-                  onChange={handleEnderecoChange}
-                  required
-                />
-                {enderecoError && (
-                  <p className="text-red-500 text-xs italic">{enderecoError}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="numero">Número:</Label>
-                <Input
-                  type="text"
-                  id="numero"
-                  name="numero"
-                  value={numero}
-                  onChange={handleNumeroChange}
-                  required
-                />
-                {numeroError && (
-                  <p className="text-red-500 text-xs italic">{numeroError}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="complemento">Complemento (opcional):</Label>
-                <Input
-                  type="text"
-                  id="complemento"
-                  name="complemento"
-                  value={complemento}
-                  onChange={handleComplementoChange}
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="bairro">Bairro:</Label>
-                <Input
-                  type="text"
-                  id="bairro"
-                  name="bairro"
-                  value={bairro}
-                  readOnly
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="cidade">Cidade:</Label>
-                <Input
-                  type="text"
-                  id="cidade"
-                  name="cidade"
-                  value={cidade}
-                  readOnly
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="uf">UF:</Label>
-                <Input type="text" id="uf" name="uf" value={uf} readOnly />
-              </div>
-              <p className="text-gray-600 text-sm italic">
-                Frete: R$ {frete.toFixed(2)}
-              </p>
-            </div>
+            <EntregaForm
+              mostrar={desejaEntrega}
+              cep={cep}
+              endereco={endereco}
+              numero={numero}
+              complemento={complemento}
+              bairro={bairro}
+              cidade={cidade}
+              uf={uf}
+              frete={frete}
+              handleCepChange={handleCepChange}
+              handleEnderecoChange={handleEnderecoChange}
+              handleNumeroChange={handleNumeroChange}
+              handleComplementoChange={handleComplementoChange}
+              cepError={cepError}
+              enderecoError={enderecoError}
+              numeroError={numeroError}
+            />
           )}
 
-          <div className="space-y-1">
-            <Label htmlFor="formaPagamento">Forma de Pagamento:</Label>
-            <Select
-              value={formaPagamento}
-              onValueChange={handleFormaPagamentoChange}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecione a forma de pagamento" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                <SelectItem value="pix">Pix</SelectItem>
-                <SelectItem value="cartao">Cartão</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <PagamentoForm
+            formaPagamento={formaPagamento}
+            onChange={handleFormaPagamentoChange}
+          />
 
           <p className="font-semibold">Total: R$ {totalComFrete.toFixed(2)}</p>
 
-          <div className="space-y-1">
-            <Label htmlFor="notes">Observações Adicionais:</Label>
-            <Textarea
-              id="notes"
-              name="notes"
-              rows={3}
-              value={notes}
-              onChange={handleNotesChange}
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-foreground text-background font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            disabled={submitting}
-          >
-            <FaWhatsapp className="w-6 h-6 mr-2" />
-            {submitting ? "Enviando Pedido..." : "Enviar Pedido via WhatsApp"}
-          </Button>
+          <ObservacoesForm notes={notes} onChange={handleNotesChange} />
+          <BotaoSubmit submitting={submitting} />
         </form>
       </CardContent>
     </Card>
