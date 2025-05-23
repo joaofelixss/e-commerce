@@ -8,12 +8,15 @@ import {
   ValidationPipe,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { VendasService } from './vendas.service';
 import { CreateVendaDto } from './dto/create-venda.dto';
 import { AddItemVendaDto } from './dto/add-item-venda.dto';
 import { UpdateVendaDto } from './dto/update-venda.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('vendas')
 export class VendasController {
   constructor(private readonly vendasService: VendasService) {}
