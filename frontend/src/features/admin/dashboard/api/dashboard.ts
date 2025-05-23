@@ -3,68 +3,57 @@ import axios from "axios";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 const API_LOCAL = "http://localhost:3000";
 
-// Faturamento total
-export const getTotalRevenue = async (): Promise<number> => {
+// Helpers
+const fetchJson = async <T>(
+  url: string,
+  options: RequestInit = {}
+): Promise<T> => {
   try {
-    const response = await axios.get(`${backendUrl}/dashboard/revenue`, {
-      withCredentials: true,
+    const res = await fetch(url, {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
     });
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar faturamento total:", error);
+
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(error || `Erro ${res.status}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error(`Erro em fetch para ${url}:`, error);
     throw error;
   }
 };
 
-// Contagem de pedidos
+// Endpoints
+
+export const getTotalRevenue = async (): Promise<number> => {
+  return fetchJson<number>(`${backendUrl}/dashboard/revenue`);
+};
+
 export const getOrderCounts = async (): Promise<{
   pending: number;
   completed: number;
   cancelled: number;
 }> => {
-  try {
-    const response = await axios.get(`${backendUrl}/dashboard/orders`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar contagem de pedidos:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/dashboard/orders`);
 };
 
-// Produtos com baixo estoque (apenas contagem)
 export const getLowStockCount = async (): Promise<number> => {
-  try {
-    const response = await axios.get(`${backendUrl}/dashboard/low-stock`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar contagem de baixo estoque:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/dashboard/low-stock`);
 };
 
-// Desempenho de vendas (gráfico)
 export const getSalesPerformance = async (): Promise<
   { name: string; Vendas: number }[]
 > => {
-  try {
-    const response = await axios.get(
-      `${backendUrl}/dashboard/sales-performance`,
-      {
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar desempenho de vendas:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/dashboard/sales-performance`);
 };
 
-// Pedidos recentes (para dashboard)
 export const getRecentOrders = async (
   limit: number = 5
 ): Promise<
@@ -76,67 +65,26 @@ export const getRecentOrders = async (
     total: number;
   }[]
 > => {
-  try {
-    const response = await axios.get(
-      `${backendUrl}/dashboard/recent-orders?limit=${limit}`,
-      {
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar pedidos recentes:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/dashboard/recent-orders?limit=${limit}`);
 };
 
-// Produtos com baixo estoque (detalhes)
 export const getLowStockProducts = async (): Promise<LowStockProduct[]> => {
-  try {
-    const response = await axios.get(
-      `${backendUrl}/dashboard/low-stock-products`,
-      {
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar produtos com baixo estoque:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/dashboard/low-stock-products`);
 };
 
-// Listar todos os pedidos
 export const getAllOrders = async (): Promise<{ pedidos: OrderListItem[] }> => {
-  try {
-    const response = await axios.get(`${backendUrl}/pedidos`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error: unknown) {
-    console.error("Erro ao buscar todos os pedidos:", error);
-    throw error;
-  }
+  return fetchJson(`${backendUrl}/pedidos`);
 };
 
-// Atualizar status do pedido
 export const updateOrderStatus = async (
   orderId: string,
   newStatus: "pendente" | "concluído" | "cancelado"
 ): Promise<void> => {
-  try {
-    await axios.patch(
-      `${backendUrl}/pedidos/${orderId}`,
-      { status: newStatus },
-      {
-        withCredentials: true,
-      }
-    );
-    console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
-  } catch (error: unknown) {
-    console.error(`Erro ao atualizar o status do pedido ${orderId}:`, error);
-    throw error;
-  }
+  await fetchJson(`${backendUrl}/pedidos/${orderId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status: newStatus }),
+  });
+  console.log(`Status do pedido ${orderId} atualizado com sucesso.`);
 };
 
 // Interfaces
