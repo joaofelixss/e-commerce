@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import {
   BellIcon,
   CreditCardIcon,
@@ -38,10 +39,24 @@ interface NavUserProps {
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const handleLogout = async () => {
+    try {
+      // Faz a requisição para o backend limpar o cookie de autenticação
+      await axios.post(`${backendUrl}/auth/logout`, null, {
+        withCredentials: true,
+      });
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    router.push("/login");
+      // Limpa o token local (se estiver usando localStorage por algum motivo)
+      localStorage.removeItem("accessToken");
+
+      // Redireciona para a página de login
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao deslogar:", error);
+      // Mesmo assim redireciona para login, pode avisar o usuário aqui também
+      router.push("/login");
+    }
   };
 
   return (

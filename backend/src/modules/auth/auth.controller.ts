@@ -26,4 +26,9 @@ export class AuthController {
 
     return { user };
   }
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('jwt'); // nome do cookie que você usa
+    return { message: 'Logout realizado com sucesso' };
+  }
 }

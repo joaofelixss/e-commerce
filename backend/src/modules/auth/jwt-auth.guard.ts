@@ -7,20 +7,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { IncomingHttpHeaders } from 'http';
-import { UsersService } from '../users/users.service'; // Importe o UsersService
+import { UsersService } from '../users/users.service';
 
 interface JwtPayload {
-  sub: string; // Alterado para string, pois o ID é UUID
+  sub: string;
   username: string;
-  role?: string; // Adicionado o role ao payload
+  role?: string;
   iat?: number;
   exp?: number;
-}
-
-interface RequestWithHeaders extends Request {
-  headers: IncomingHttpHeaders;
-  user?: JwtPayload;
 }
 
 @Injectable()
@@ -29,43 +23,44 @@ export class JwtAuthGuard implements CanActivate {
 
   constructor(
     private jwtService: JwtService,
-    private usersService: UsersService, // Injete o UsersService
+    private usersService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<RequestWithHeaders>();
-    const authHeader = request.headers?.authorization;
+    const request = context.switchToHttp().getRequest<Request>();
 
-    this.logger.debug(`Authorization Header: ${authHeader}`); // LOG DO HEADER
+    // 🔍 1. Tenta pegar o token do cookie
+    const tokenFromCookie = request.cookies?.token;
+    this.logger.debug(`Cookie Token: ${tokenFromCookie}`);
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      this.logger.warn('Token JWT não encontrado ou em formato inválido.');
-      throw new UnauthorizedException(
-        'Token JWT não encontrado ou em formato inválido.',
-      );
+    if (!tokenFromCookie) {
+      this.logger.warn('Token JWT não encontrado no cookie.');
+      throw new UnauthorizedException('Token JWT não encontrado.');
     }
 
-    const token = authHeader.split(' ')[1];
-    this.logger.debug(`Extracted Token: ${token}`); // LOG DO TOKEN EXTRAÍDO
-
     try {
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
-      this.logger.debug(`Token Verified. Payload: ${JSON.stringify(payload)}`); // LOG DO PAYLOAD VERIFICADO
+      // 🔐 2. Verifica o token
+      const payload =
+        await this.jwtService.verifyAsync<JwtPayload>(tokenFromCookie);
+      this.logger.debug(
+        `Token Verificado. Payload: ${JSON.stringify(payload)}`,
+      );
+
       request.user = payload;
 
-      // Verificar se a role do usuário no payload é "admin"
+      // 👮 3. Checa role (caso seja necessário)
       if (payload.role === 'admin') {
-        return true; // Acesso permitido para administradores
-      } else {
-        this.logger.warn(
-          `Acesso negado. Usuário '${payload.username}' não tem a role de administrador. Role: ${payload.role}`,
-        );
-        throw new UnauthorizedException(
-          'Acesso negado. Requer role de administrador.',
-        );
+        return true;
       }
+
+      this.logger.warn(
+        `Acesso negado. Usuário '${payload.username}' não tem a role de administrador.`,
+      );
+      throw new UnauthorizedException(
+        'Acesso negado. Requer role de administrador.',
+      );
     } catch (error) {
-      this.logger.error(`Token Verification Failed:`, error); // LOG DO ERRO DE VERIFICAÇÃO
+      this.logger.error(`Falha na verificação do token JWT:`, error);
       throw new UnauthorizedException('Token JWT inválido.');
     }
   }

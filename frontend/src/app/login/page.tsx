@@ -39,25 +39,21 @@ const LoginPage = () => {
 
     try {
       const response = await fetch("http://localhost:3000/auth/login", {
-        // Sua rota de login no backend
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // 👈 permite envio/recebimento de cookies
         body: JSON.stringify({ email, senha: password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Login bem-sucedido
-        const accessToken = data.access_token; // Assumindo que o token é retornado como "accessToken"
-        localStorage.setItem("accessToken", accessToken); // Armazena o token
         toast.success("Login realizado com sucesso!");
-        router.push("/dashboard"); // Redirecionamento para o dashboard
+        router.push("/dashboard");
       } else {
-        // Falha no login
-        toast.error(data.message || "Credenciais inválidas."); // Exibe a mensagem de erro da API
+        toast.error(data.message || "Credenciais inválidas.");
       }
     } catch (error: unknown) {
       toast.error("Ocorreu um erro ao tentar fazer login.");

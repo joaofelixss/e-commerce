@@ -1,4 +1,4 @@
-// /src/features/admin/autenticacao/api/users.ts
+// /src/features/autenticacao/api/users.ts
 import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
